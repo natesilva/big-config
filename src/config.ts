@@ -72,7 +72,10 @@ export class BigConfig {
    * get a configuration setting
    * @param key the configuration setting to retrieve
    */
-  get<T>(key: string): T { return _.cloneDeep(_.get<T>(this.settings, key)); }
+  get<T=any>(key: string): T { return _.cloneDeep(_.get<T>(this.settings, key)); }
+
+  /** get all settings */
+  getAll() { return _.cloneDeep(this.settings); }
 
   /**
    * Return the expected location of the `config` directory, which must be located in the

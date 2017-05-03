@@ -83,10 +83,10 @@ const config = require('big-config');
 console.log(config.get('database'));
 
 // get just the port (JavaScript):
-console.log(config.get('database:port'));
+console.log(config.get('database.port'));
 
 // get just the port (w/optional strong typing in TypeScript):
-console.log(config.get<number>('database:port'));
+console.log(config.get<number>('database.port'));
 ```
 
 Each settings file, such as `database.json` or `redis.json`, is its own

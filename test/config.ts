@@ -117,6 +117,7 @@ export class BigConfigTests {
       envs.forEach(env => {
         const config = new BigConfig(path.join(jsonTmpDir, fixtureName), env);
         const expected = fixture.merged[env];
+        expect(config.getAll()).to.deep.equal(expected);
         Object.keys(expected).forEach(key => {
           expect(config.get(key), `${fixtureName}/${env}/${key}`).to.deep.equal(expected[key]);
         });
@@ -132,6 +133,7 @@ export class BigConfigTests {
       envs.forEach(env => {
         const config = new BigConfig(path.join(jsonTmpDir, fixtureName), env);
         const expected = fixture.merged[env];
+        expect(config.getAll()).to.deep.equal(expected);
         Object.keys(expected).forEach(key => {
           expect(config.get(key), `${fixtureName}/${env}/${key}`).to.deep.equal(expected[key]);
         });
