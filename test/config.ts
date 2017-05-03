@@ -54,8 +54,6 @@ const fixtures = {
 };
 
 
-// const tmpdir = path.join(__dirname, 'fixtures');
-// fs.mkdirSync(tmpdir);
 const { name: jsonTmpDir } = tmp.dirSync({unsafeCleanup: true});
 const { name: jsTmpDir } = tmp.dirSync({unsafeCleanup: true});
 
