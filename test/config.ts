@@ -136,14 +136,14 @@ export class BigConfigTests {
       // this very project doesn’t have a config dir
       const config = new BigConfig();
     }
-    expect(fn).to.throw(Error);
+    expect(fn).to.throw(BigConfigError);
   }
 
   @test 'should throw if config dir name is a file instead of a dir' () {
     const fn = () => {
       const config = new BigConfig(__filename);
     }
-    expect(fn).to.throw(Error);
+    expect(fn).to.throw(BigConfigError);
   }
 
   @test 'should allow using an environment variable to specify the config dir' () {
