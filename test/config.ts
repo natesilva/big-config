@@ -149,6 +149,7 @@ export class BigConfigTests {
   @test 'should allow using an environment variable to specify the config dir' () {
     process.env.NODE_CONFIG_DIR = jsonTmpDir;
     const config = new BigConfig();
+    delete process.env.NODE_CONFIG_DIR;
   }
 
   @test 'should allow using a relative environment variable to specify the config dir' ()
