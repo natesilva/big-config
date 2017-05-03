@@ -6,7 +6,7 @@ import * as tmp from 'tmp';
 
 import { only, suite, test } from 'mocha-typescript';
 
-import { BigConfig } from '../src/config';
+import { BigConfig } from '../src/bigConfig';
 import { BigConfigError } from '../src/error';
 import { expect } from 'chai';
 

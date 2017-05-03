@@ -1,2 +1,2 @@
-import { BigConfig } from './config';
+import { BigConfig } from './bigConfig';
 export const config = new BigConfig();
