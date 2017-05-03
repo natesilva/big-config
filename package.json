@@ -13,10 +13,10 @@
   "devDependencies": {
     "@types/chai": "^3.5.1",
     "@types/chai-as-promised": "0.0.30",
-    "@types/lodash": "^4.14.63",
-    "@types/nconf": "0.0.34",
+    "@types/lodash.clonedeep": "^4.5.2",
+    "@types/lodash.get": "^4.4.2",
+    "@types/lodash.merge": "^4.6.2",
     "@types/node": "^7.0.16",
-    "@types/sqlite3": "^2.2.33",
     "@types/tmp": "0.0.32",
     "chai": "^3.5.0",
     "chai-as-promised": "^6.0.0",
@@ -30,6 +30,8 @@
     "typescript": "^2.3.2"
   },
   "dependencies": {
-    "lodash": "^4.17.4"
+    "lodash.clonedeep": "^4.5.0",
+    "lodash.get": "^4.4.2",
+    "lodash.merge": "^4.6.0"
   }
 }

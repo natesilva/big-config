@@ -10,14 +10,6 @@ import { BigConfig } from '../src/config';
 import { BigConfigError } from '../src/error';
 import { expect } from 'chai';
 
-// process.on('unhandledRejection', (err: Error) => {
-  //   console.error(
-  //     '🙅  REJECTED: unhandled Promise rejection, crashing now, stack is:\n',
-  //     err
-  //   );
-  //   process.exit(1);
-  // });
-
 // test fixtures: generate an array of {key: <uuid>, value: <uuid>}
 const fixtures = {
     test1: {

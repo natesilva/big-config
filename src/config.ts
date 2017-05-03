@@ -1,8 +1,11 @@
-import * as _ from 'lodash';
 import * as fs from 'fs';
 import * as path from 'path';
 
 import { BigConfigError } from './error';
+import merge = require('lodash.merge');
+import get = require('lodash.get');
+import cloneDeep = require('lodash.clonedeep');
+
 
 export class BigConfig {
   private readonly configDir: string;
@@ -36,13 +39,13 @@ export class BigConfig {
     this.settings = BigConfig.loadDirConfigs(path.join(this.configDir, 'default'));
 
     // env-specific overrides
-    this.settings = _.merge(
+    this.settings = merge(
       this.settings,
       BigConfig.loadDirConfigs(path.join(this.configDir, this.env))
     );
 
     // local setting overrides
-    this.settings = _.merge(
+    this.settings = merge(
       this.settings,
       BigConfig.loadDirConfigs(path.join(this.configDir, 'local'))
     );
@@ -62,7 +65,7 @@ export class BigConfig {
         const basename = path.basename(configFilename, path.extname(configFilename));
         let fp = path.join(dir, configFilename);
         // deep-clone the require’d object so any changes made to it don’t propagate
-        settings[basename] = _.cloneDeep(require(path.join(dir, configFilename)));
+        settings[basename] = cloneDeep(require(path.join(dir, configFilename)));
     });
 
     return settings;
@@ -72,10 +75,10 @@ export class BigConfig {
    * get a configuration setting
    * @param key the configuration setting to retrieve
    */
-  get<T=any>(key: string): T { return _.cloneDeep(_.get<T>(this.settings, key)); }
+  get<T=any>(key: string): T { return cloneDeep(get<T>(this.settings, key)); }
 
   /** get all settings */
-  getAll() { return _.cloneDeep(this.settings); }
+  getAll() { return cloneDeep(this.settings); }
 
   /**
    * Return the expected location of the `config` directory, which must be located in the
