@@ -1,0 +1,16 @@
+{
+  "include": [
+    "src/**/*",
+    "test/**/*"
+  ],
+  "compilerOptions": {
+    "outDir": "prod",
+    "target": "ES6",
+    "module": "commonjs",
+    "sourceMap": true,
+    "lib": ["es6"],
+    "noImplicitReturns": true,
+    "experimentalDecorators": true,
+    "declaration": true
+  }
+}
