@@ -6,7 +6,7 @@ This is a configuration loader for Node.js. Your configuration is stored in
 ## Comparison with existing systems
 
 Using a typical configuration system you have to cram your settings into
-just a few files: `default.json` and perhaps a `development.json` and 
+just a few files: `default.json` and perhaps a `development.json` and
 `production.json` that override the defaults.
 
 This is hard to manage when you have many settings. You end up with a
@@ -41,11 +41,10 @@ Within the `default` directory, create as many JSON files as you want, with
 settings. For example, you might create a `database.json` file with your
 database config, and a `redis.json` file with your Redis settings.
 
-If you need to override some settings, or add additional settings, when running
-in `production` or `development` mode, add files to those directories. For
-example, if you put a `database.json` file in the `development` subdirectory,
-those settings will be **merged with** and override any equivalent settings from
-the `default` directory.
+If you need different settings when running in `production` or `development`
+mode, add files to those directories. For example, if you put a `database.json`
+file in the `development` subdirectory, those settings will be **merged with**
+and override any equivalent settings from the `default` directory.
 
 In `default/database.json`:
 
