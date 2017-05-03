@@ -14,7 +14,7 @@ export class BigConfig {
   private settings: any = {};
 
   /** load the project configuration */
-  constructor(configDir: string = null, env = null) {
+  constructor(configDir?: string, env?: string) {
     this.configDir = configDir || BigConfig.getConfigDir();
     this.env = env || process.env.NODE_ENV || 'development';
 
