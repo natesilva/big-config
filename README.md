@@ -6,7 +6,7 @@ This is a configuration loader for Node.js. Your configuration is stored in
 ## Comparison with existing systems
 
 Using a typical configuration system you have to cram your settings into
-just a few files: `default.json`, plus a `development.json` and a
+just a few files: `default.json` and perhaps a `development.json` and 
 `production.json` that override the defaults.
 
 This is hard to manage when you have many settings. You end up with a
