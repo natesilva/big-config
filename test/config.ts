@@ -370,4 +370,20 @@ export class ConfigTests {
       }
     }
   }
+
+  @test 'calling get() before calling load() is an error' () {
+    const config = new Config('development');
+    const fn = () => {
+      config.get('some.value');
+    };
+    expect(fn).to.throw(ConfigError);
+  }
+
+  @test 'calling getAll() before calling load() is an error' () {
+    const config = new Config('development');
+    const fn = () => {
+      config.getAll();
+    };
+    expect(fn).to.throw(ConfigError);
+  }
 }

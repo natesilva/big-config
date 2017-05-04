@@ -14,6 +14,8 @@ export class Config {
   private settings: any = {};
   // the first time get() or getAll() are called, settings are locked and can’t be changed
   private locked = false;
+  // detect if load has ever been called; calling get() before load() is an error
+  private hasCalledLoad = false;
   /** the detected environment (such as development, production, or staging) */
   public readonly env: string;
 
@@ -28,6 +30,8 @@ export class Config {
       throw new ConfigError(msg);
     }
 
+    this.hasCalledLoad = true;
+
     const fn = (cb) => {
       loader.load(this.env).then(data => { cb(null, data); }).catch(cb);
     };
@@ -41,12 +45,20 @@ export class Config {
    * @param key the configuration setting to retrieve
    */
   get<T=any>(key: string): T {
+    if (!this.hasCalledLoad) {
+      const msg = 'attempt to access config settings before they have been loaded';
+      throw new ConfigError(msg);
+    }
     this.locked = true;
     return cloneDeep(get<T>(this.settings, key));
   }
 
   /** get all settings */
   getAll() {
+    if (!this.hasCalledLoad) {
+      const msg = 'attempt to access config settings before they have been loaded';
+      throw new ConfigError(msg);
+    }
     this.locked = true;
     return cloneDeep(this.settings);
   }
