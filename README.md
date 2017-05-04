@@ -45,7 +45,7 @@ import { config } from '@adpearance-foureyes/big-config';
 const dbSettings = config.get('database');
 ```
 
-Once you have accessed any setting—by calling `config.get()` or `config.getAll()`—the settings become locked/readonly, and no further settings can be loaded. Settings cannot be changed at runtime. This is by design. It ensures that settings are stable and predictable, and it prevents this module from being used as a general “globals” or cache bucket. There are much better solutions for that type of data, including Redis, memoization, etc.
+Once you have accessed any setting—by calling `config.get()` or `config.getAll()`—the settings become locked/readonly, and no further settings can be loaded. Settings cannot be changed at runtime; this is by design. It ensures that settings are stable and predictable, and it prevents this module from being used as a general “globals” or cache bucket. There are much better solutions for that type of data, including Redis, memoization, etc.
 
 ### Loading from files
 
@@ -103,12 +103,12 @@ config.load(new config.Loader.FilesLoader('/some/other/directory'));
 
 Loading from S3 works very much like loading from files. The main differences are:
 
-* Only `.json` files are supported (no `.js`).
+* Only `.json` files are supported.
 * The `local` folder is not supported.
 
 To load from S3, within a bucket, create a folder for your project’s configuration files. Within that folder, create a `default` folder plus `production`, `development` or any other environment-specific folder you need and place your `.json` files in those folders.
 
-Initialize the loader with your bucket name and prefix. The prefix is the folder name in S3.
+Initialize the loader with your bucket name and prefix. (The prefix is the folder name in S3.)
 
 ```
 settings-bucket
@@ -123,7 +123,7 @@ settings-bucket
     └── staging
 ```
 
-In this example, the bucket name is `settings-bucket` and the prefix (for an app called “App 1”) is `app1`.
+In this example, we’ve loaded settings for two different apps into an S3 bucket named `settings-bucket`. The prefix (for “App 1”) is `app1`.
 
 ## Loading from environment variables
 
