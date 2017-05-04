@@ -1,20 +1,33 @@
 # big-config
 
-This is a configuration loader for Node.js. Your configuration is stored in `.json` or `.js` files in your project’s `config` directory. Configuration settings can be overridden or supplemented by environment variables.
+This is a configuration loader for Node.js.
 
-## Comparison with existing systems
+## Features
 
-Using a typical configuration system you have to cram your settings into just a few files: `default.json` and perhaps a `development.json` and `production.json` that override the defaults.
-
-This is hard to manage when you have many settings. You end up with a single huge `default.json` that has database settings, Redis configuration, AWS settings, session settings, internal configuration,and more.
-
-`big-config` lets you split these into separate files, such as `database.json`, `aws.json`, `session.json`, and so on.
+* Break large configuration sets into smaller files.
+* Load settings from local `.json` or `.js` files, from Amazon S3, and from environment variables.
+* Customize a base configuration for `development` or `production` mode.
+* Allow developers to have custom local configurations.
 
 ## Basic setup
 
-The configuration is loaded from a set of files in your `config` directory. You can override or supplement the config values with environment variables. This is useful when certain values (like passwords) may be passed in through your production environment, instead of being checked into Git in your config files.
+```typescript
+import { config } from '@adpearance-foureyes/big-config';
+import * as AWS from 'aws-sdk';
 
-In your project’s top-level directory (where `package.json` is located), create a `config` directory. Within that, create a `default` subdirectory, plus one directory for each `NODE_ENV` for which you might need to override settings (such as `production` and `development`).
+const credentials = new AWS.SharedIniFileCredentials({ profile: 'your-profile' });
+AWS.config.credentials = credentials;
+
+config.loadFromFiles();
+config.loadFromS3('your-bucket', 'config/');
+config.loadFromEnvironment();
+
+const timezone = config.get('app.timezone');
+```
+
+### Load from files
+
+To load configuration from local JSON or JavaScript files, in your project’s top-level directory (where `package.json` is located), create a `config` directory. Within that, create a `default` subdirectory, plus one directory for each `NODE_ENV` for which you need to override settings (such as `production` and `development`).
 
 Finally, you can create a `local` directory which contains settings that will always be applied last to override/extend any other settings. You don’t check the `local` directory into Git; each developer can have their own.
 
@@ -30,7 +43,7 @@ Finally, you can create a `local` directory which contains settings that will al
 
 Within the `default` directory, create as many JSON files as you want, with settings. For example, you might create a `database.json` file with your database config, and a `redis.json` file with your Redis settings.
 
-If you need different settings when running in `production` or `development` mode, add files to those directories. For example, if you put a `database.json` file in the `development` subdirectory, those settings will be **merged with** and override any equivalent settings from the `default` directory.
+If you need different settings when running in `production` or `development` mode, add files to those directories. For example, if you put `database.json` in the `development` subdirectory, those settings will be **merged with** and override any settings from `database.json` in the `default` directory.
 
 In `default/database.json`:
 
@@ -61,9 +74,9 @@ module.exports = { "timezone": "Asia/Hong_Kong" };
 ## How to use
 
 ```typescript
-import * as config from 'big-config';
-// or:
-const config = require('big-config');
+import { config } from 'big-config';
+// or the traditional way:
+const config = require('big-config').config;
 
 // get all database settings:
 console.log(config.get('database'));
@@ -100,7 +113,7 @@ It’s easier to see by example. To set `database.password`:
 export CONFIG__database__password=supersecret123
 ```
 
-Note that `local` settings override ANY other settings, including environment variables.
+Note that `local` settings override any other settings, including environment variables.
 
 ## Other environment variables
 
@@ -108,3 +121,7 @@ Finally, there are two other environment variables that provide additional custo
 
 * `BIGCONFIG_ROOT` - the path to your configuration directory, if it’s not called `config` or if it’s not located in your project’s top-level directory.
 * `BIGCONFIG_ENV_PREFIX` - this defaults to `CONFIG__` but you can set it to something else if you want to name your environment variables with a different prefix.
+
+## Use with S3
+
+As a special case, you can load configurations from Amazon S3. This is meant to be used in a deployment/production scenario.

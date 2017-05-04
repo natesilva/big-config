@@ -11,6 +11,7 @@
     "prepare": "rimraf prod && tsc"
   },
   "devDependencies": {
+    "@types/aws-sdk": "^2.7.0",
     "@types/chai": "^3.5.1",
     "@types/chai-as-promised": "0.0.30",
     "@types/lodash.clonedeep": "^4.5.2",
@@ -31,6 +32,7 @@
     "typescript": "^2.3.2"
   },
   "dependencies": {
+    "aws-sdk": "^2.48.0",
     "lodash.clonedeep": "^4.5.0",
     "lodash.get": "^4.4.2",
     "lodash.merge": "^4.6.0",
