@@ -10,7 +10,9 @@
     "test": "tsc && nyc --reporter lcov --reporter text mocha ./prod/test",
     "prepare": "rimraf prod && tsc"
   },
-  "engines" : { "node" : ">=6.0.0" },
+  "engines": {
+    "node": ">=6.0.0"
+  },
   "devDependencies": {
     "@types/chai": "^3.5.1",
     "@types/chai-as-promised": "0.0.30",
@@ -35,6 +37,7 @@
   },
   "dependencies": {
     "aws-sdk": "^2.48.0",
+    "deasync": "^0.1.9",
     "lodash.clonedeep": "^4.5.0",
     "lodash.get": "^4.4.2",
     "lodash.merge": "^4.6.0",

@@ -2,6 +2,8 @@ import merge = require('lodash.merge');
 import cloneDeep = require('lodash.clonedeep');
 import get = require('lodash.get');
 
+import * as deasync from 'deasync';
+
 import { ConfigError } from './error';
 import { EnvironmentLoader } from './loader/environment';
 import { FilesLoader } from './loader/files';
@@ -20,12 +22,17 @@ export class Config {
   }
 
   /** load settings using the given Loader */
-  async load(loader: LoaderInterface) {
+  load(loader: LoaderInterface) {
     if (this.locked) {
       const msg = 'settings are locked and can’t be updated once they have been accessed';
       throw new ConfigError(msg);
     }
-    const configValues = await loader.load(this.env);
+
+    const fn = (cb) => {
+      loader.load(this.env).then(data => { cb(null, data); }).catch(cb);
+    };
+
+    const configValues = deasync(fn)();
     this.settings = merge(this.settings, configValues);
   }
 

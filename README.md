@@ -21,19 +21,14 @@ import * as AWS from 'aws-sdk';
 const credentials = new AWS.SharedIniFileCredentials({ profile: 'your-profile' });
 AWS.config.credentials = credentials;
 
-// configs are loaded asynchronously
-async function loadConfig() {
-  await config.load(new config.Loader.FilesLoader());
-  await config.load(new config.Loader.EnvironmentLoader());
-  await config.load(new config.Loader.S3Loader('your-bucket', 'your/prefix'));
-}
+config.load(new config.Loader.FilesLoader());
+config.load(new config.Loader.EnvironmentLoader());
+config.load(new config.Loader.S3Loader('your-bucket', 'your/prefix'));
 
 // start using it
-loadConfig.then(() => {
-  console.log(config.get('app.timezone'));
-  // if you’re using TypeScript, you can optionally use this type-safe variant:
-  console.log(config.get<string>('app.timezone'));
-});
+console.log(config.get('app.timezone'));
+// if you’re using TypeScript, you can optionally use this type-safe variant:
+console.log(config.get<string>('app.timezone'));
 ```
 
 From any other file, you can now reference the same config:
