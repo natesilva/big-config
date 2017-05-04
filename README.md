@@ -11,11 +11,12 @@ This is a configuration loader for Node.js.
 
 ## Basic setup
 
-Initialize your config during your main app startup:
+Create an `initConfig.js` file that initializes your configuration:
 
-```typescript
-import { config } from '@adpearance-foureyes/big-config';
-import * as AWS from 'aws-sdk';
+```javascript
+// initConfig.js
+const config = require('big-config').config;
+const AWS = require('aws-sdk');
 
 // if you are going to use AWS, it’s up to you to set your credentials first
 const credentials = new AWS.SharedIniFileCredentials({ profile: 'your-profile' });
@@ -25,28 +26,24 @@ config.load(new config.Loader.FilesLoader());
 config.load(new config.Loader.EnvironmentLoader());
 config.load(new config.Loader.S3Loader('your-bucket', 'your/prefix'));
 
-// start using it
-console.log(config.get('app.timezone'));
-// if you’re using TypeScript, you can optionally use this type-safe variant:
-console.log(config.get<string>('app.timezone'));
+module.exports = config;
 ```
 
-From any other file, you can now reference the same config:
+In your other files, import `./initConfig` and use the settings:
 
 ```javascript
-import { config } from '@adpearance-foureyes/big-config';
+// app.js
+const config = require('./initConfig');
 
-// no need to initialize
-const dbSettings = config.get('database');
+console.log(config.get('app.timezone'));
+console.log(config.get<string>('app.name'));    // optional strong typing in TypeScript
 ```
-
-Once you have accessed any setting—by calling `config.get()` or `config.getAll()`—the settings become locked/readonly, and no further settings can be loaded. Settings cannot be changed at runtime; this is by design. It ensures that settings are stable and predictable, and it prevents this module from being used as a general “globals” or cache bucket. There are much better solutions for that type of data, including Redis, memoization, etc.
 
 ### Loading from files
 
 To load configuration from local JSON or JavaScript files, in your project’s top-level directory (where `package.json` is located), create a `config` directory. Within that, create a `default` subdirectory, plus one directory for each `NODE_ENV` for which you need to override settings (such as `production` and `development`).
 
-Finally, you can create a `local` directory which contains settings that will be applied last to override/extend any other settings. You don’t check the `local` directory into Git; each developer can have their own.
+Finally, you can create a `local` directory which contains settings that will be applied last to override/extend any other settings. You don’t check the `local` directory into Git; each developer can have her own.
 
 ```
 .
@@ -118,11 +115,11 @@ settings-bucket
     └── staging
 ```
 
-In this example, we’ve loaded settings for two different apps into an S3 bucket named `settings-bucket`. The prefix (for “App 1”) is `app1`.
+In this example, we’ve loaded settings for two different apps into an S3 bucket named `settings-bucket`. The prefix for App 1 is `app1`.
 
 ## Loading from environment variables
 
-When loading settings from environment variables, the Node environment (such as 'production' or 'development') is not used. All relevant environment variables are always loaded.
+When loading settings from environment variables, the Node environment (such as 'production' or 'development') is ignored.
 
 To set or override a setting, set an environment variable with a name starting with `CONFIG__` (that’s `CONFIG` followed by two underscores), plus the path to the value with two underscores separating each part.
 
@@ -137,3 +134,20 @@ If you prefer to use a different name prefix, other than `CONFIG__`, pass it to 
 ```javascript
 config.load(new config.Loader.EnvironmentLoader('MY_VARS__'));
 ```
+
+## Dealing with dependency ordering
+
+You should always create an `initConfig` module (as shown in the example at the top of this page) and use that to import `big-config` and load your settings. Your other modules then import `initConfig`—they don’t directly import `big-config`.
+
+To understand why, consider this scenario:
+
+* in `app.js` you import `big-config`
+* in `app.js` you import `./routes.js`
+    * in `./routes.js` you import `big-config` and immediately initialize your routes using one of the values from `big-config`
+* in `app.js` you load your configurations
+
+As you can see, `./routes.js` used the config _before_ it had been loaded in the main `app.js` file. To protect you from this, `big-config` will throw an error if it detects it’s being used in this way.
+
+The solution is simple. Create a module to load your settings. We called it `initConfig.js` in the example at the top of the page.
+
+Node modules are idempotent, so this ensures that (a) initialization only happens once and (b) all modules get the config object _after_ it’s been initialized.
