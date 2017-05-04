@@ -108,7 +108,7 @@ Loading from S3 works very much like loading from files. The main differences ar
 
 To load from S3, within a bucket, create a folder for your project’s configuration files. Within that folder, create a `default` folder plus `production`, `development` or any other environment-specific folder you need and place your `.json` files in those folders.
 
-Initialize the loader with your bucket name and prefix. The prefix is the folder name in S3.
+Initialize the loader with your bucket name and prefix. (The prefix is the folder name in S3.)
 
 ```
 settings-bucket
