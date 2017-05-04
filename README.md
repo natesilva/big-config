@@ -17,7 +17,7 @@ Initialize your config during your main app startup:
 import { config } from '@adpearance-foureyes/big-config';
 import * as AWS from 'aws-sdk';
 
-// if you are going to use AWS, it’s up to you to set up your credentials first
+// if you are going to use AWS, it’s up to you to set your credentials first
 const credentials = new AWS.SharedIniFileCredentials({ profile: 'your-profile' });
 AWS.config.credentials = credentials;
 
