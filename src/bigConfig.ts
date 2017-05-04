@@ -2,8 +2,10 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 import { BigConfigError } from './error';
+
 import merge = require('lodash.merge');
 import get = require('lodash.get');
+import set = require('lodash.set');
 import cloneDeep = require('lodash.clonedeep');
 
 
@@ -44,6 +46,12 @@ export class BigConfig {
       BigConfig.loadDirConfigs(path.join(this.configDir, this.env))
     );
 
+    // environment variables
+    this.settings = merge(
+      this.settings,
+      BigConfig.loadEnvironmentVariables()
+    );
+
     // local setting overrides
     this.settings = merge(
       this.settings,
@@ -71,6 +79,19 @@ export class BigConfig {
     return settings;
   }
 
+  private static loadEnvironmentVariables() {
+    const settings = {};
+
+    const envPrefix = process.env.BIGCONFIG_ENV_PREFIX || 'CONFIG__';
+    const values = Object.keys(process.env)
+      .filter(k => k.startsWith(envPrefix))
+      .map(k => [k.slice(envPrefix.length).replace('__', '.'), process.env[k]]);
+
+    values.forEach(([k, v]) => { set(settings, k, v); })
+
+    return settings;
+  }
+
   /**
    * get a configuration setting
    * @param key the configuration setting to retrieve
@@ -86,7 +107,7 @@ export class BigConfig {
    * directory actually exists.
    */
   static getConfigDir() {
-    let result = process.env.NODE_CONFIG_DIR || path.join(process.cwd(), 'config');
+    let result = process.env.BIGCONFIG_ROOT || path.join(process.cwd(), 'config');
     if (result.indexOf('.') === 0) { result = path.join(process.cwd() , result); }
     return result;
   }

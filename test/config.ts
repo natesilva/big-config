@@ -99,6 +99,14 @@ export class BigConfigTests {
     });
   }
 
+  after() {
+    let keys = Object.keys(process.env).filter(k => k.startsWith('CONFIG__'));
+    keys.forEach(key => delete process.env[key]);
+
+    keys = Object.keys(process.env).filter(k => k.startsWith('BIGCONFIG_'));
+    keys.forEach(key => delete process.env[key]);
+  }
+
   @test 'load configs from .json' () {
     Object.keys(fixtures).forEach(fixtureName => {
       const fixture = fixtures[fixtureName];
@@ -131,6 +139,65 @@ export class BigConfigTests {
     });
   }
 
+  @test 'augment settings with environment variables' () {
+    Object.keys(fixtures).forEach(fixtureName => {
+      const fixture = fixtures[fixtureName];
+      const envs = Object.keys(fixture.merged);
+
+      const password = 'hunter1';
+      const host = 'env_host';
+      process.env.CONFIG__database__host = host;
+      process.env.CONFIG__database__password = password;
+
+      envs.forEach(env => {
+        const config = new BigConfig(path.join(jsonTmpDir, fixtureName), env);
+        expect(config.get('database.password')).to.equal(password);
+        expect(config.get('database.host')).to.equal(host);
+      });
+    });
+  }
+
+  @test 'local takes precedence over environment variables' () {
+    Object.keys(fixtures).forEach(fixtureName => {
+      const fixture = fixtures[fixtureName];
+      const envs = Object.keys(fixture.merged);
+
+      // this env var should be ignored because local overrides it
+      process.env.CONFIG__database__user = 'suzyq';
+
+      envs.forEach(env => {
+        const config = new BigConfig(path.join(jsonTmpDir, fixtureName), env);
+        const expected = fixture.merged[env];
+        expect(config.getAll()).to.deep.equal(expected);
+        Object.keys(expected).forEach(key => {
+          expect(config.get(key), `${fixtureName}/${env}/${key}`).to.deep.equal(expected[key]);
+        });
+      });
+    });
+  }
+
+  @test 'environment variables can be renamed' () {
+    Object.keys(fixtures).forEach(fixtureName => {
+      const fixture = fixtures[fixtureName];
+      const envs = Object.keys(fixture.merged);
+
+      const password = 'hunter1';
+      const host = 'env_host';
+      process.env.BIGCONFIG_ENV_PREFIX = 'MY_CONFIG_';
+      process.env.MY_CONFIG_database__host = host;
+      process.env.MY_CONFIG_database__password = password;
+
+      envs.forEach(env => {
+        const config = new BigConfig(path.join(jsonTmpDir, fixtureName), env);
+        expect(config.get('database.password')).to.equal(password);
+        expect(config.get('database.host')).to.equal(host);
+      });
+
+      let keys = Object.keys(process.env).filter(k => k.startsWith('MY_CONFIG_'));
+      keys.forEach(key => delete process.env[key]);
+    });
+  }
+
   @test 'missing config directory should throw' () {
     const fn = () => {
       // this very project doesn’t have a config dir
@@ -147,16 +214,14 @@ export class BigConfigTests {
   }
 
   @test 'should allow using an environment variable to specify the config dir' () {
-    process.env.NODE_CONFIG_DIR = jsonTmpDir;
+    process.env.BIGCONFIG_ROOT = jsonTmpDir;
     const config = new BigConfig();
-    delete process.env.NODE_CONFIG_DIR;
   }
 
   @test 'should allow using a relative environment variable to specify the config dir' ()
   {
-    process.env.NODE_CONFIG_DIR = './' + path.relative('.', jsonTmpDir);
+    process.env.BIGCONFIG_ROOT = './' + path.relative('.', jsonTmpDir);
     const config = new BigConfig();
-    delete process.env.NODE_CONFIG_DIR;
   }
 
   @test 'default config location should be correct' ()

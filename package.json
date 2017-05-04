@@ -16,6 +16,7 @@
     "@types/lodash.clonedeep": "^4.5.2",
     "@types/lodash.get": "^4.4.2",
     "@types/lodash.merge": "^4.6.2",
+    "@types/lodash.set": "^4.3.2",
     "@types/node": "^7.0.16",
     "@types/tmp": "0.0.32",
     "chai": "^3.5.0",
@@ -32,6 +33,7 @@
   "dependencies": {
     "lodash.clonedeep": "^4.5.0",
     "lodash.get": "^4.4.2",
-    "lodash.merge": "^4.6.0"
+    "lodash.merge": "^4.6.0",
+    "lodash.set": "^4.3.2"
   }
 }
