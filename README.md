@@ -123,7 +123,7 @@ settings-bucket
     └── staging
 ```
 
-In this example, the bucket name is `settings-bucket` and the prefix (for an app called “App 1”) is `app1`.
+In this example, we’ve loaded settings for two different apps into an S3 bucket named `settings-bucket`. The prefix (for “App 1”) is `app1`.
 
 ## Loading from environment variables
 
