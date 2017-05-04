@@ -45,7 +45,7 @@ console.log(config.get('app.timezone'));
 console.log(config.get<string>('app.name'));    // optional strong typing in TypeScript
 ```
 
-### Loading from files
+## Loading from files
 
 To load configuration from local JSON or JavaScript files, in your project’s top-level directory (where `package.json` is located), create a `config` directory. Within that, create a `default` subdirectory, plus one directory for each `NODE_ENV` for which you need to override settings (such as `production` and `development`).
 
