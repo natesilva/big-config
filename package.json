@@ -6,6 +6,7 @@
   "license": "BSD-3-Clause",
   "author": "Nate Silva <nate.silva@adpearance.com>",
   "main": "prod/src/index.js",
+  "types": "prod/src/index.d.ts",
   "scripts": {
     "test": "tsc && nyc --reporter lcov --reporter text mocha ./prod/test",
     "prepare": "rimraf prod && tsc"
