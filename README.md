@@ -45,7 +45,7 @@ import { config } from '@adpearance-foureyes/big-config';
 const dbSettings = config.get('database');
 ```
 
-Once you have accessed any setting—by calling `config.get()` or `config.getAll()`—the settings become locked/readonly, and no further settings can be loaded. Settings cannot be changed at runtime. This is by design. It ensures that settings are stable and predictable, and it prevents this module from being used as a general “globals” or cache bucket. There are much better solutions for that type of data, including Redis, memoization, etc.
+Once you have accessed any setting—by calling `config.get()` or `config.getAll()`—the settings become locked/readonly, and no further settings can be loaded. Settings cannot be changed at runtime; this is by design. It ensures that settings are stable and predictable, and it prevents this module from being used as a general “globals” or cache bucket. There are much better solutions for that type of data, including Redis, memoization, etc.
 
 ### Loading from files
 
