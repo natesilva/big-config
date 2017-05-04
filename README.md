@@ -2,6 +2,12 @@
 
 This is a configuration loader for Node.js that supports large configuration sets and optionally loading configurations from Amazon S3.
 
+To install:
+
+```
+npm install --save big-config
+```
+
 ## Features
 
 * Breaks large configuration sets into smaller files.
