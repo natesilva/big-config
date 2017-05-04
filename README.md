@@ -103,7 +103,7 @@ config.load(new config.Loader.FilesLoader('/some/other/directory'));
 
 Loading from S3 works very much like loading from files. The main differences are:
 
-* Only `.json` files are supported (no `.js`).
+* Only `.json` files are supported.
 * The `local` folder is not supported.
 
 To load from S3, within a bucket, create a folder for your project’s configuration files. Within that folder, create a `default` folder plus `production`, `development` or any other environment-specific folder you need and place your `.json` files in those folders.
