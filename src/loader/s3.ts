@@ -1,9 +1,10 @@
 import * as AWS from 'aws-sdk';
+import * as path from 'path';
 
-import { Loader } from './interface';
+import { LoaderInterface } from './interface';
 import merge = require('lodash.merge');
 
-export class S3Loader implements Loader {
+export class S3Loader implements LoaderInterface {
   /**
    * @param bucket the S3 bucket where settings are stored
    * @param prefix the prefix (path/directory name) in the bucket where settings are found
@@ -52,11 +53,12 @@ export class S3Loader implements Loader {
       return [key, data];
     });
 
-    const loadedKeys =  new Map(await Promise.all(promises));
+    const loadedKeys = new Map(await Promise.all(promises));
 
     // now build the resulting settings object by applying the loaded data in order
     for (let key of keysToLoad) {
-      settings = merge(settings, loadedKeys.get(key));
+      let baseKeyName = path.basename(key, path.extname(key));
+      settings = merge(settings, { [baseKeyName]: loadedKeys.get(key) });
     }
 
     return settings;

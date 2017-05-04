@@ -2,19 +2,19 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 import { ConfigError } from '../error';
-import { Loader } from './interface';
+import { LoaderInterface } from './interface';
 
 import merge = require('lodash.merge');
 import cloneDeep = require('lodash.clonedeep');
 
-export class FilesLoader implements Loader {
-  private readonly configDir: string;
+export class FilesLoader implements LoaderInterface {
+  public readonly configDir: string;
 
   /**
    * @param configDir the directory where the config files are located
    */
   constructor(configDir?: string) {
-    this.configDir = configDir || FilesLoader.getConfigDir();
+    this.configDir = configDir || path.join(process.cwd(), 'config');
 
     if (!fs.existsSync(this.configDir)) {
       const msg = `config directory does not exist: ${this.configDir}`;
@@ -49,13 +49,6 @@ export class FilesLoader implements Loader {
     );
 
     return settings;
-  }
-
-  /** the directory where the config files should be found */
-  static getConfigDir() {
-    let result = process.env.BIGCONFIG_ROOT || path.join(process.cwd(), 'config');
-    if (result.indexOf('.') === 0) { result = path.join(process.cwd() , result); }
-    return result;
   }
 
   /** build a config object by reading all the config files in this dir */

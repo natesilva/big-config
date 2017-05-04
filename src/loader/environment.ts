@@ -1,8 +1,8 @@
-import { Loader } from './interface';
+import { LoaderInterface } from './interface';
 
 import set = require('lodash.set');
 
-export class EnvironmentLoader implements Loader {
+export class EnvironmentLoader implements LoaderInterface {
   /**
    * @param envPrefix the prefix for names of environment variables to import
    */
@@ -20,10 +20,9 @@ export class EnvironmentLoader implements Loader {
   async load(): Promise<any> {
     const settings = {};
 
-    const envPrefix = process.env.BIGCONFIG_ENV_PREFIX || 'CONFIG__';
     const values = Object.keys(process.env)
-      .filter(k => k.startsWith(envPrefix))
-      .map(k => [k.slice(envPrefix.length).replace('__', '.'), process.env[k]]);
+      .filter(k => k.startsWith(this.envPrefix))
+      .map(k => [k.slice(this.envPrefix.length).replace('__', '.'), process.env[k]]);
 
     values.forEach(([k, v]) => { set(settings, k, v); })
 

@@ -10,8 +10,8 @@
     "test": "tsc && nyc --reporter lcov --reporter text mocha ./prod/test",
     "prepare": "rimraf prod && tsc"
   },
+  "engines" : { "node" : ">=6.0.0" },
   "devDependencies": {
-    "@types/aws-sdk": "^2.7.0",
     "@types/chai": "^3.5.1",
     "@types/chai-as-promised": "0.0.30",
     "@types/lodash.clonedeep": "^4.5.2",
@@ -20,6 +20,7 @@
     "@types/lodash.set": "^4.3.2",
     "@types/node": "^7.0.16",
     "@types/tmp": "0.0.32",
+    "@types/uuid": "^2.0.29",
     "chai": "^3.5.0",
     "chai-as-promised": "^6.0.0",
     "mocha": "^3.2.0",
@@ -29,7 +30,8 @@
     "tmp": "0.0.31",
     "ts-node": "^3.0.2",
     "tslint": "^5.0.0",
-    "typescript": "^2.3.2"
+    "typescript": "^2.3.2",
+    "uuid": "^3.0.1"
   },
   "dependencies": {
     "aws-sdk": "^2.48.0",

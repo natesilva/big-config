@@ -5,10 +5,10 @@
   ],
   "compilerOptions": {
     "outDir": "prod",
-    "target": "ES6",
+    "target": "ES2016",
     "module": "commonjs",
     "sourceMap": true,
-    "lib": ["es6"],
+    "lib": ["es2016"],
     "noImplicitReturns": true,
     "experimentalDecorators": true,
     "declaration": true
