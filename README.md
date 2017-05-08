@@ -13,6 +13,7 @@ npm install --save big-config
 * Breaks large configuration sets into smaller files.
 * Loads settings from local `.json` or `.js` files, from `.json` files on Amazon S3, and from environment variables.
 * Starts with a `default` configuration and adds additional customizations for the current environment, such as `development` or `production`.
+    * Without having to put all related configuration into single large “production” or “development” file
 * Lets developers have a custom local configuration.
 
 ## Basic setup
