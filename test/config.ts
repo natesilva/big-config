@@ -7,7 +7,7 @@ import * as AWS from 'aws-sdk';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as tmp from 'tmp';
-import * as uuid from 'uuid';
+import * as shortid from 'shortid';
 
 import { suite, test, timeout } from 'mocha-typescript';
 
@@ -28,7 +28,7 @@ if (useAws) {
   awsConfig = require(awsConfigPath);
   s3Prefix = awsConfig.prefix;
   if (!s3Prefix.endsWith('/')) { s3Prefix += '/'; }
-  s3Prefix += uuid.v4();
+  s3Prefix += shortid.generate();
 }
 
 const fixtures = {
@@ -283,8 +283,8 @@ export class ConfigTests {
       const envs = Object.keys(fixture.merged);
 
       for (let env of envs) {
-        const password = uuid.v4();
-        const host = uuid.v4();
+        const password = shortid.generate();
+        const host = shortid.generate();
         process.env.CONFIG__database__host = host;
         process.env.CONFIG__database__password = password;
 
@@ -308,8 +308,8 @@ export class ConfigTests {
       const envs = Object.keys(fixture.merged);
 
       for (let env of envs) {
-        const password = uuid.v4();
-        const host = uuid.v4();
+        const password = shortid.generate();
+        const host = shortid.generate();
         process.env.MY_CONFIG_database__host = host;
         process.env.MY_CONFIG_database__password = password;
 
@@ -331,7 +331,7 @@ export class ConfigTests {
     const fn = () => {
       const config = new Config();
       config.load(
-        new config.Loader.FilesLoader('/nonexistent-path/' + uuid.v4())
+        new config.Loader.FilesLoader('/nonexistent-path/' + shortid.generate())
       );
     };
     expect(fn).to.throw(ConfigError);
