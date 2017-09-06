@@ -1,5 +1,4 @@
 import * as AWS from 'aws-sdk';
-import * as deasync from 'deasync';
 import * as path from 'path';
 
 import { LoaderInterface } from './interface';
@@ -17,6 +16,7 @@ export class S3Loader implements LoaderInterface {
       this._load(env).then(data => { cb(null, data); }).catch(cb);
     };
 
+    const deasync = require('deasync');
     return deasync(fn)();
   }
 
