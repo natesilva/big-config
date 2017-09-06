@@ -30,7 +30,7 @@ export class FilesLoader implements LoaderInterface {
     }
   }
 
-  async load(env: string): Promise<any> {
+  load(env: string): any {
     let settings = {};
 
     // default settings

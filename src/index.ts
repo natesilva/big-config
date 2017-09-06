@@ -2,8 +2,6 @@ import merge = require('lodash.merge');
 import cloneDeep = require('lodash.clonedeep');
 import get = require('lodash.get');
 
-import * as deasync from 'deasync';
-
 import { ConfigError } from './error';
 import { EnvironmentLoader } from './loader/environment';
 import { FilesLoader } from './loader/files';
@@ -31,12 +29,7 @@ export class Config {
     }
 
     this.hasCalledLoad = true;
-
-    const fn = (cb) => {
-      loader.load(this.env).then(data => { cb(null, data); }).catch(cb);
-    };
-
-    const configValues = deasync(fn)();
+    const configValues = loader.load(this.env);
     this.settings = merge(this.settings, configValues);
   }
 

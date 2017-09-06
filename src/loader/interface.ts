@@ -1,3 +1,3 @@
 export interface LoaderInterface {
-  load(env?: string): Promise<any>;
+  load(env?: string): any;
 }

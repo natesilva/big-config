@@ -1,4 +1,5 @@
 import * as AWS from 'aws-sdk';
+import * as deasync from 'deasync';
 import * as path from 'path';
 
 import { LoaderInterface } from './interface';
@@ -11,6 +12,14 @@ export class S3Loader implements LoaderInterface {
    */
   constructor(private readonly bucket: string, private readonly prefix: string) {}
 
+  load(env: string): any {
+    const fn = (cb) => {
+      this._load(env).then(data => { cb(null, data); }).catch(cb);
+    };
+
+    return deasync(fn)();
+  }
+
   /**
    * Load settings from S3. You must have previously configured your AWS credentials,
    * using AWS.config.credentials or similar. https://goo.gl/sPqbRE If running on EC2 you
@@ -18,7 +27,7 @@ export class S3Loader implements LoaderInterface {
    * you to ensure that credentials are in place before calling this function.
    * @param env the active environment (such as development or production)
    */
-  async load(env: string): Promise<any> {
+  private async _load(env: string): Promise<any> {
     let settings = {};
 
     const s3 = new AWS.S3();

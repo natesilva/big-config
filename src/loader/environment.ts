@@ -17,7 +17,7 @@ export class EnvironmentLoader implements LoaderInterface {
    *
    * Will result in: { database: { host: 'some.host' } }
    */
-  async load(): Promise<any> {
+  load(): any {
     const settings = {};
 
     const values = Object.keys(process.env)
