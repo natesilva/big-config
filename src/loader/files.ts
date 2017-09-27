@@ -1,5 +1,6 @@
 import * as fs from 'fs';
 import * as path from 'path';
+import * as stripJsonComments from 'strip-json-comments';
 
 import { ConfigError } from '../error';
 import { LoaderInterface } from './interface';
@@ -58,14 +59,20 @@ export class FilesLoader implements LoaderInterface {
     if (!fs.existsSync(dir)) { return settings; }
 
     const configFilenames = fs.readdirSync(dir).filter(
-      x => x.slice(-3) === '.js' || x.slice(-5) === '.json'
+      x => ['.js', '.json'].includes(path.extname(x))
     ).sort();
 
     configFilenames.forEach(configFilename => {
         const basename = path.basename(configFilename, path.extname(configFilename));
         let fp = path.join(dir, configFilename);
         // deep-clone the require’d object so any changes made to it don’t propagate
-        settings[basename] = cloneDeep(require(path.join(dir, configFilename)));
+        if (path.extname(fp) === '.json') {
+          // for JSON, strip out comments
+          const input = fs.readFileSync(fp).toString();
+          settings[basename] = cloneDeep(JSON.parse(stripJsonComments(input)));
+        } else {
+          settings[basename] = cloneDeep(require(fp));
+        }
     });
 
     return settings;

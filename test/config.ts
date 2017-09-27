@@ -94,10 +94,11 @@ export class ConfigTests {
         fs.mkdirSync(envDir);
         Object.keys(env).forEach(filename => {
           const values = env[filename];
-          fs.writeFileSync(
-            path.join(envDir, filename + '.json'),
-            JSON.stringify(values)
-          );
+          const jsonContent = `
+            // JSON config ${filename}.json for environment ${env}
+            ${JSON.stringify(values)}
+          `;
+          fs.writeFileSync(path.join(envDir, filename + '.json'), jsonContent);
         });
       });
     });
