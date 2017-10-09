@@ -22,12 +22,14 @@ Create an `initConfig.js` file that initializes your configuration:
 
 ```javascript
 // initConfig.js
-const config = require('big-config').config;
+const Config = require('big-config').Config;
 const AWS = require('aws-sdk');
 
 // if you are going to use AWS, it’s up to you to set your credentials first
 const credentials = new AWS.SharedIniFileCredentials({ profile: 'your-profile' });
 AWS.config.credentials = credentials;
+
+const config = new Config();
 
 config.load(new config.Loader.FilesLoader());
 config.load(new config.Loader.EnvironmentLoader());

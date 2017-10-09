@@ -64,5 +64,5 @@ export class Config {
   };
 }
 
-// the single global Config instance
+/** DEPRECATED: the single global Config instance (use new Config() instead) */
 export const config = new Config();
