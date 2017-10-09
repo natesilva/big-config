@@ -38,6 +38,8 @@ config.load(new config.Loader.S3Loader('your-bucket', 'your/prefix'));
 module.exports = config;
 ```
 
+⚠  Deprecation warning: Use of the global `config` object (lowercase `c`), exported by `big-config`, is deprecated and will be phased out in version 2. Instead, create your own object using `new Config()` as shown above.
+
 In your other files, import `./initConfig` and use the settings:
 
 ```javascript
