@@ -1,6 +1,5 @@
 import { LoaderInterface } from './interface';
-
-import set = require('lodash.set');
+import { set } from 'lodash';
 
 export class EnvironmentLoader implements LoaderInterface {
   /**
@@ -24,7 +23,9 @@ export class EnvironmentLoader implements LoaderInterface {
       .filter(k => k.startsWith(this.envPrefix))
       .map(k => [k.slice(this.envPrefix.length).replace('__', '.'), process.env[k]]);
 
-    values.forEach(([k, v]) => { set(settings, k, v); })
+    values.forEach(([k, v]) => {
+      set(settings, k, v);
+    });
 
     return settings;
   }

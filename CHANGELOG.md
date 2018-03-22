@@ -1,3 +1,7 @@
+## 1.6.0 (2018-03-22)
+
+* YAML configuration files are now supported. Use file extension `.yaml`.
+
 ## 1.5.0 (2017-09-27)
 
 * You can now load JSON files that contain comments.

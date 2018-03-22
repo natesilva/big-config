@@ -2,7 +2,7 @@ import * as AWS from 'aws-sdk';
 import * as path from 'path';
 
 import { LoaderInterface } from './interface';
-import merge = require('lodash.merge');
+import { merge } from 'lodash';
 
 export class S3Loader implements LoaderInterface {
   /**
@@ -12,8 +12,12 @@ export class S3Loader implements LoaderInterface {
   constructor(private readonly bucket: string, private readonly prefix: string) {}
 
   load(env: string): any {
-    const fn = (cb) => {
-      this._load(env).then(data => { cb(null, data); }).catch(cb);
+    const fn = cb => {
+      this._load(env)
+        .then(data => {
+          cb(null, data);
+        })
+        .catch(cb);
     };
 
     const deasync = require('deasync');
@@ -35,22 +39,23 @@ export class S3Loader implements LoaderInterface {
 
     let params: AWS.S3.ListObjectsV2Request = { Bucket: this.bucket, Prefix: prefix };
     let data: AWS.S3.ListObjectsV2Output;
-    try { data = await s3.listObjectsV2(params).promise(); }
-    catch (err) { throw err; }
+    try {
+      data = await s3.listObjectsV2(params).promise();
+    } catch (err) {
+      throw err;
+    }
 
     const keys = data.Contents.map(k => k.Key);
 
     // Get the keys (filenames) of all the config files we are going to load, in the
     // order we want to load them. Later files override settings from earlier ones.
-    let defaultKeys = keys.filter(
-      k => k.startsWith(`${prefix}default/`) &&
-      k.endsWith('.json')
-    ).sort();
+    let defaultKeys = keys
+      .filter(k => k.startsWith(`${prefix}default/`) && k.endsWith('.json'))
+      .sort();
 
-    let envKeys = keys.filter(
-      k => k.startsWith(`${prefix}${env}/`) &&
-      k.endsWith('.json')
-    ).sort();
+    let envKeys = keys
+      .filter(k => k.startsWith(`${prefix}${env}/`) && k.endsWith('.json'))
+      .sort();
 
     let keysToLoad = defaultKeys.concat(envKeys);
 

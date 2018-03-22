@@ -1,6 +1,4 @@
-import merge = require('lodash.merge');
-import cloneDeep = require('lodash.clonedeep');
-import get = require('lodash.get');
+import { cloneDeep, get, merge } from 'lodash';
 
 import { ConfigError } from './error';
 import { EnvironmentLoader } from './loader/environment';
@@ -37,13 +35,13 @@ export class Config {
    * get a configuration setting
    * @param key the configuration setting to retrieve
    */
-  get<T=any>(key: string): T {
+  get<T = any>(key: string): T {
     if (!this.hasCalledLoad) {
       const msg = 'attempt to access config settings before they have been loaded';
       throw new ConfigError(msg);
     }
     this.locked = true;
-    return cloneDeep(get<T>(this.settings, key));
+    return cloneDeep(get(this.settings, key));
   }
 
   /** get all settings */

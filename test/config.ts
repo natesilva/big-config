@@ -6,76 +6,82 @@
 import * as AWS from 'aws-sdk';
 import * as fs from 'fs';
 import * as path from 'path';
-import * as tmp from 'tmp';
 import * as shortid from 'shortid';
+import * as tmp from 'tmp';
+import * as yaml from 'js-yaml';
 
+import { cloneDeep, merge } from 'lodash';
 import { suite, test, timeout } from 'mocha-typescript';
 
 import { Config } from '../src';
-import { expect } from 'chai';
 import { ConfigError } from '../src/error';
-
-import merge = require('lodash.merge');
-import cloneDeep = require('lodash.clonedeep');
+import { expect } from 'chai';
 
 // at runtime our __dirname will be <top dir>/prod/test
 const awsConfigPath = path.join(__dirname, '..', '..', 'test', 'aws.json');
 const useAws = fs.existsSync(awsConfigPath);
+console.log({ awsConfigPath, useAws });
 let s3Prefix: string = null;
 let awsConfig: any = null;
 if (useAws) {
   AWS.config.loadFromPath(awsConfigPath);
   awsConfig = require(awsConfigPath);
   s3Prefix = awsConfig.prefix;
-  if (!s3Prefix.endsWith('/')) { s3Prefix += '/'; }
+  if (!s3Prefix.endsWith('/')) {
+    s3Prefix += '/';
+  }
   s3Prefix += shortid.generate();
 }
 
 const fixtures = {
-    test1: {
-        input: {
-            default: {
-                'database': { host: 'default.db', port: 3306, user: 'dbuser' },
-                'aws': { region: 'us-west-2', profile: 'app-aws-profile' }
-            },
+  test1: {
+    input: {
+      default: {
+        database: { host: 'default.db', port: 3306, user: 'dbuser' },
+        aws: { region: 'us-west-2', profile: 'app-aws-profile' }
+      },
 
-            development: {
-                'database': { host: 'dev.db', debug: true }
-            },
+      development: {
+        database: { host: 'dev.db', debug: true }
+      },
 
-            production: {
-                'aws': { secretAccessKey: '1234567890ABCDEFG' },
-                'redis': { host: 'redis.host' }
-            },
+      production: {
+        aws: { secretAccessKey: '1234567890ABCDEFG' },
+        redis: { host: 'redis.host' }
+      },
 
-            local: {
-                'database': { user: 'otheruser' }
-            }
+      local: {
+        database: { user: 'otheruser' }
+      }
+    },
+
+    merged: {
+      development: {
+        database: { host: 'dev.db', port: 3306, user: 'otheruser', debug: true },
+        aws: { region: 'us-west-2', profile: 'app-aws-profile' }
+      },
+
+      production: {
+        database: { host: 'default.db', port: 3306, user: 'otheruser' },
+        aws: {
+          region: 'us-west-2',
+          profile: 'app-aws-profile',
+          secretAccessKey: '1234567890ABCDEFG'
         },
+        redis: { host: 'redis.host' }
+      },
 
-        merged: {
-            development: {
-                database: { host: 'dev.db', port: 3306, user: 'otheruser', debug: true },
-                aws: { region: 'us-west-2', profile: 'app-aws-profile' }
-            },
-
-            production: {
-                database: { host: 'default.db', port: 3306, user: 'otheruser' },
-                aws: { region: 'us-west-2', profile: 'app-aws-profile', secretAccessKey: '1234567890ABCDEFG' },
-                redis: { host: 'redis.host' }
-            },
-
-            staging: {
-                database: { host: 'default.db', port: 3306, user: 'otheruser' },
-                aws: { region: 'us-west-2', profile: 'app-aws-profile' }
-            }
-        }
+      staging: {
+        database: { host: 'default.db', port: 3306, user: 'otheruser' },
+        aws: { region: 'us-west-2', profile: 'app-aws-profile' }
+      }
     }
+  }
 };
 
-
-const { name: jsonTmpDir } = tmp.dirSync({unsafeCleanup: true});
-const { name: jsTmpDir } = tmp.dirSync({unsafeCleanup: true});
+const { name: jsonTmpDir } = tmp.dirSync({ unsafeCleanup: true });
+const { name: jsTmpDir } = tmp.dirSync({ unsafeCleanup: true });
+const { name: yamlTmpDir } = tmp.dirSync({ unsafeCleanup: true });
 
 @suite('big-config configuration parser')
 export class ConfigTests {
@@ -95,7 +101,7 @@ export class ConfigTests {
         Object.keys(env).forEach(filename => {
           const values = env[filename];
           const jsonContent = `
-            // JSON config ${filename}.json for environment ${env}
+            // JSON config ${filename}.json for environment ${envName}
             ${JSON.stringify(values)}
           `;
           fs.writeFileSync(path.join(envDir, filename + '.json'), jsonContent);
@@ -122,12 +128,33 @@ export class ConfigTests {
       });
     });
 
+    // create the test files as YAML
+    Object.keys(fixtures).forEach(fixtureName => {
+      const fixture = fixtures[fixtureName].input;
+      const fixtureDir = path.join(yamlTmpDir, fixtureName);
+      fs.mkdirSync(fixtureDir);
+      Object.keys(fixture).forEach(envName => {
+        const env = fixture[envName];
+        const envDir = path.join(fixtureDir, envName);
+        fs.mkdirSync(envDir);
+        Object.keys(env).forEach(filename => {
+          const values = env[filename];
+          const yamlContent =
+            `# YAML config ${filename}.yaml for environment ${envName}\n---\n` +
+            yaml.safeDump(values);
+          fs.writeFileSync(path.join(envDir, filename + '.yaml'), yamlContent);
+        });
+      });
+    });
+
     // drop the files on to AWS
     if (useAws) {
       const s3 = new AWS.S3();
 
       let prefix = s3Prefix;
-      if (!prefix.endsWith('/')) { prefix += '/'; }
+      if (!prefix.endsWith('/')) {
+        prefix += '/';
+      }
 
       for (let fixtureName of Object.keys(fixtures)) {
         const fixture = fixtures[fixtureName].input;
@@ -144,12 +171,14 @@ export class ConfigTests {
           for (let filename of Object.keys(env)) {
             const values = env[filename];
             const key = `${ourPrefix}/${filename}.json`;
-            await s3.putObject({
-              Bucket: awsConfig.bucketName,
-              Key: key,
-              Body: JSON.stringify(values),
-              ContentType: 'application/json'
-            }).promise();
+            await s3
+              .putObject({
+                Bucket: awsConfig.bucketName,
+                Key: key,
+                Body: JSON.stringify(values),
+                ContentType: 'application/json'
+              })
+              .promise();
             this.s3KeysCreated.push(key);
           }
         }
@@ -162,12 +191,14 @@ export class ConfigTests {
     // remove S3 files
     if (useAws) {
       const s3 = new AWS.S3();
-      await s3.deleteObjects({
-        Bucket: awsConfig.bucketName,
-        Delete: {
-          Objects: this.s3KeysCreated.map(key => ({ Key: key }))
-        }
-      }).promise();
+      await s3
+        .deleteObjects({
+          Bucket: awsConfig.bucketName,
+          Delete: {
+            Objects: this.s3KeysCreated.map(key => ({ Key: key }))
+          }
+        })
+        .promise();
     }
   }
 
@@ -180,7 +211,8 @@ export class ConfigTests {
     keys.forEach(key => delete process.env[key]);
   }
 
-  @test 'load configs from .json' () {
+  @test
+  'load configs from .json'() {
     for (let fixtureName of Object.keys(fixtures)) {
       const fixture = fixtures[fixtureName];
       const envs = Object.keys(fixture.merged);
@@ -192,13 +224,16 @@ export class ConfigTests {
         const expected = fixture.merged[env];
         expect(config.getAll(), `${fixtureName}/${env} getAll`).to.deep.equal(expected);
         Object.keys(expected).forEach(key => {
-          expect(config.get(key), `${fixtureName}/${env}/${key}`).to.deep.equal(expected[key]);
+          expect(config.get(key), `${fixtureName}/${env}/${key}`).to.deep.equal(
+            expected[key]
+          );
         });
       }
     }
   }
 
-  @test 'load configs from .js' () {
+  @test
+  'load configs from .js'() {
     for (let fixtureName of Object.keys(fixtures)) {
       const fixture = fixtures[fixtureName];
       const envs = Object.keys(fixture.merged);
@@ -210,14 +245,40 @@ export class ConfigTests {
         const expected = fixture.merged[env];
         expect(config.getAll(), `${fixtureName}/${env} getAll`).to.deep.equal(expected);
         Object.keys(expected).forEach(key => {
-          expect(config.get(key), `${fixtureName}/${env}/${key}`).to.deep.equal(expected[key]);
+          expect(config.get(key), `${fixtureName}/${env}/${key}`).to.deep.equal(
+            expected[key]
+          );
         });
       }
     }
   }
 
-  @test(timeout(10000)) 'load configs from S3' () {
-    if (!useAws) { throw new Error('AWS not configured'); }
+  @test
+  'load configs from .yaml'() {
+    for (let fixtureName of Object.keys(fixtures)) {
+      const fixture = fixtures[fixtureName];
+      const envs = Object.keys(fixture.merged);
+
+      for (let env of envs) {
+        const config = new Config(env);
+        const filesPath = path.join(yamlTmpDir, fixtureName);
+        config.load(new config.Loader.FilesLoader(filesPath));
+        const expected = fixture.merged[env];
+        expect(config.getAll(), `${fixtureName}/${env} getAll`).to.deep.equal(expected);
+        Object.keys(expected).forEach(key => {
+          expect(config.get(key), `${fixtureName}/${env}/${key}`).to.deep.equal(
+            expected[key]
+          );
+        });
+      }
+    }
+  }
+
+  @test(timeout(10000))
+  'load configs from S3'() {
+    if (!useAws) {
+      throw new Error('AWS not configured');
+    }
     for (let fixtureName of Object.keys(fixtures)) {
       const fixture = fixtures[fixtureName];
       const envs = Object.keys(fixture.merged);
@@ -229,7 +290,9 @@ export class ConfigTests {
         }
         const config = new Config(env);
         let prefix = s3Prefix;
-        if (!prefix.endsWith('/')) { prefix += '/'; }
+        if (!prefix.endsWith('/')) {
+          prefix += '/';
+        }
         prefix += fixtureName;
         config.load(new config.Loader.S3Loader(awsConfig.bucketName, prefix));
 
@@ -241,14 +304,19 @@ export class ConfigTests {
 
         expect(config.getAll(), `${fixtureName}/${env} getAll`).to.deep.equal(expected);
         Object.keys(expected).forEach(key => {
-          expect(config.get(key), `${fixtureName}/${env}/${key}`).to.deep.equal(expected[key]);
+          expect(config.get(key), `${fixtureName}/${env}/${key}`).to.deep.equal(
+            expected[key]
+          );
         });
       }
     }
   }
 
-  @test(timeout(10000)) 'load configs from S3 (prefix ends with slash)' () {
-    if (!useAws) { throw new Error('AWS not configured'); }
+  @test(timeout(10000))
+  'load configs from S3 (prefix ends with slash)'() {
+    if (!useAws) {
+      throw new Error('AWS not configured');
+    }
     for (let fixtureName of Object.keys(fixtures)) {
       const fixture = fixtures[fixtureName];
       const envs = Object.keys(fixture.merged);
@@ -260,7 +328,9 @@ export class ConfigTests {
         }
         const config = new Config(env);
         let prefix = s3Prefix;
-        if (!prefix.endsWith('/')) { prefix += '/'; }
+        if (!prefix.endsWith('/')) {
+          prefix += '/';
+        }
         prefix += fixtureName + '/';
         config.load(new config.Loader.S3Loader(awsConfig.bucketName, prefix));
 
@@ -272,13 +342,16 @@ export class ConfigTests {
 
         expect(config.getAll(), `${fixtureName}/${env} getAll`).to.deep.equal(expected);
         Object.keys(expected).forEach(key => {
-          expect(config.get(key), `${fixtureName}/${env}/${key}`).to.deep.equal(expected[key]);
+          expect(config.get(key), `${fixtureName}/${env}/${key}`).to.deep.equal(
+            expected[key]
+          );
         });
       }
     }
   }
 
-  @test 'augment settings with environment variables' () {
+  @test
+  'augment settings with environment variables'() {
     for (let fixtureName of Object.keys(fixtures)) {
       const fixture = fixtures[fixtureName];
       const envs = Object.keys(fixture.merged);
@@ -303,7 +376,8 @@ export class ConfigTests {
     }
   }
 
-  @test 'environment variables can be renamed' () {
+  @test
+  'environment variables can be renamed'() {
     for (let fixtureName of Object.keys(fixtures)) {
       const fixture = fixtures[fixtureName];
       const envs = Object.keys(fixture.merged);
@@ -328,7 +402,8 @@ export class ConfigTests {
     }
   }
 
-  @test 'missing config directory should throw' () {
+  @test
+  'missing config directory should throw'() {
     const fn = () => {
       const config = new Config();
       config.load(
@@ -345,7 +420,8 @@ export class ConfigTests {
     expect(fn2).to.throw(ConfigError);
   }
 
-  @test 'should throw if config dir name is a file instead of a dir' () {
+  @test
+  'should throw if config dir name is a file instead of a dir'() {
     const fn = () => {
       const config = new Config();
       config.load(new config.Loader.FilesLoader(__filename));
@@ -353,7 +429,8 @@ export class ConfigTests {
     expect(fn).to.throw(ConfigError);
   }
 
-  @test 'settings can’t be changed after they are accessed' () {
+  @test
+  'settings can’t be changed after they are accessed'() {
     for (let fixtureName of Object.keys(fixtures)) {
       const fixture = fixtures[fixtureName];
       const envs = Object.keys(fixture.merged);
@@ -365,14 +442,15 @@ export class ConfigTests {
         expect(config.get('database.host')).to.equal(fixture.merged[env].database.host);
 
         const fn = () => {
-          config.load(new config.Loader.FilesLoader(filesPath))
+          config.load(new config.Loader.FilesLoader(filesPath));
         };
         expect(fn).to.throw(ConfigError);
       }
     }
   }
 
-  @test 'calling get() before calling load() is an error' () {
+  @test
+  'calling get() before calling load() is an error'() {
     const config = new Config('development');
     const fn = () => {
       config.get('some.value');
@@ -380,7 +458,8 @@ export class ConfigTests {
     expect(fn).to.throw(ConfigError);
   }
 
-  @test 'calling getAll() before calling load() is an error' () {
+  @test
+  'calling getAll() before calling load() is an error'() {
     const config = new Config('development');
     const fn = () => {
       config.getAll();
