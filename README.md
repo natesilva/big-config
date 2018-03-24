@@ -1,31 +1,33 @@
-# big-config
+# big-config [![npm](https://img.shields.io/npm/v/big-config.svg)](https://www.npmjs.com/package/big-config) [![dependencies](https://img.shields.io/david/natesilva/big-config.svg)](https://www.npmjs.com/package/big-config) [![license](https://img.shields.io/github/license/natesilva/big-config.svg)](https://github.com/natesilva/big-config/blob/master/LICENSE) [![node](https://img.shields.io/node/v/big-config.svg)](https://www.npmjs.com/package/big-config)
 
-This is a configuration loader for Node.js that supports large configuration sets and optionally loading configurations from Amazon S3.
+> Node.js configuration loader for big projects
 
-To install:
+Load JSON, YAML, and JavaScript configuration files. Supports large projects with big configuration sets, and optionally loading configurations from Amazon S3.
+
+## Install
 
 ```
-npm install --save big-config
+npm i big-config
 ```
 
 ## Features
 
 * Breaks large configuration sets into smaller files.
-* Loads settings from local `.json`, `.yaml`, or `.js` files; from `.json` files on Amazon S3; and from environment variables.
+* Loads settings from local `.json`, `.yaml`, or `.js` files. Can also load settings from `.json` files on Amazon S3 or from environment variables.
 * Starts with a `default` configuration and adds additional customizations for the current environment, such as `development` or `production`.
-    * Without having to put all related configuration into a single large “production” or “development” file
+    * Without having to put all related configuration into a single huge “production” or “development” file
 * Lets developers have a custom local configuration.
 
 ## Basic setup
 
-Create an `initConfig.js` file that initializes your configuration:
+Create an `initConfig.js` that initializes your configuration:
 
 ```javascript
 // initConfig.js
 const Config = require('big-config').Config;
 const AWS = require('aws-sdk');
 
-// if you are going to use AWS, it’s up to you to set your credentials first
+// if you are going to use AWS, it’s up to you to set your credentials first:
 const credentials = new AWS.SharedIniFileCredentials({ profile: 'your-profile' });
 AWS.config.credentials = credentials;
 
@@ -37,8 +39,6 @@ config.load(new config.Loader.S3Loader('your-bucket', 'your/prefix'));
 
 module.exports = config;
 ```
-
-⚠  Deprecation warning: Use of the global `config` object (lowercase `c`), exported by `big-config`, is deprecated and will be phased out in version 2. Instead, create your own object using `new Config()` as shown above.
 
 In your other files, import `./initConfig` and use the settings:
 
@@ -52,9 +52,9 @@ console.log(config.get<string>('app.name'));    // optional strong typing in Typ
 
 ## Loading from files
 
-To load configuration from local JSON, YAML, or JavaScript files, in your project’s top-level directory (where `package.json` is located), create a `config` directory. Within that, create a `default` subdirectory, plus one directory for each `NODE_ENV` for which you need to override settings (such as `production` and `development`).
+In your project’s top-level directory (where `package.json` is located), create a `config` directory. Within that, create a `default` subdirectory, plus one directory for each `NODE_ENV` for which you need to override settings (such as `production` and `development`).
 
-Finally, you can create a `local` directory which contains settings that will be applied last to override/extend any other settings. You don’t check the `local` directory into Git; each developer can have her own.
+Finally, you can create a `local` directory with settings that will be applied last, to override/extend any other settings. Don’t check the `local` directory into Git; each developer can have her own.
 
 ```
 .
@@ -66,9 +66,9 @@ Finally, you can create a `local` directory which contains settings that will be
     └── local/
 ```
 
-Within the `default` directory, create as many JSON or YAML files as you want, with settings. For example, you might create a `database.json` file with your database config, and a `redis.yaml` file with your Redis settings.
+Within the `default` directory, create as many JSON or YAML files as you want. For example, you might create `database.json` with your database config, and `redis.yaml` with your Redis settings.
 
-If you need different settings when running in `production` or `development` mode, add files to those directories. For example, if you put `database.yaml` in the `development` subdirectory, those settings will be **merged with** and override any settings from `database.json` in the `default` directory.
+If you need different settings when running in `production` or `development` mode, add files to those directories. You can mix and match JSON, YAML, and JavaScript. For example, if you put `database.yaml` in the `development` subdirectory, those settings will be **merged with** and override any settings from `database.json` in the `default` directory.
 
 In `default/database.json`:
 
@@ -110,7 +110,7 @@ Loading from S3 works very much like loading from files. The main differences ar
 * Only `.json` files are supported.
 * The `local` folder is not supported.
 
-To load from S3, within a bucket, create a folder for your project’s configuration files. Within that folder, create a `default` folder plus `production`, `development` or any other environment-specific folder you need and place your `.json` files in those folders.
+Within a bucket, create a folder for your project’s configuration files. Within that folder, create a `default` folder plus `production`, `development` or any other environment-specific folder you need and place your `.json` files in those folders.
 
 Initialize the loader with your bucket name and prefix. (The prefix is the folder name in S3.)
 
@@ -133,7 +133,7 @@ In this example, we’ve loaded settings for two different apps into an S3 bucke
 
 When loading settings from environment variables, the Node environment (such as 'production' or 'development') is ignored.
 
-To set or override a setting, set an environment variable with a name starting with `CONFIG__` (that’s `CONFIG` followed by two underscores), plus the path to the value with two underscores separating each part.
+Set an environment variable with a name starting with `CONFIG__` (that’s `CONFIG` followed by two underscores), plus the path to the value, with two underscores separating each part.
 
 It’s easier to see by example. To set `database.password`:
 
@@ -155,7 +155,7 @@ To understand why, consider this scenario:
 
 * in `app.js` you import `big-config`
 * in `app.js` you import `./routes.js`
-    * in `./routes.js` you import `big-config` and immediately initialize your routes using one of the values from `big-config`
+    * in `./routes.js` you import `big-config` and immediately try to initialize routes using one of the values from `big-config` (but the configuration hasn’t been loaded yet!)
 * in `app.js` you load your configurations
 
 As you can see, `./routes.js` used the config _before_ it had been loaded in the main `app.js` file. To protect you from this, `big-config` will throw an error if it detects it’s being used in this way.
