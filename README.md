@@ -11,7 +11,7 @@ npm install --save big-config
 ## Features
 
 * Breaks large configuration sets into smaller files.
-* Loads settings from local `.json` or `.js` files, from `.json` files on Amazon S3, and from environment variables.
+* Loads settings from local `.json`, `.yaml`, or `.js` files; from `.json` files on Amazon S3; and from environment variables.
 * Starts with a `default` configuration and adds additional customizations for the current environment, such as `development` or `production`.
     * Without having to put all related configuration into a single large “production” or “development” file
 * Lets developers have a custom local configuration.
@@ -52,7 +52,7 @@ console.log(config.get<string>('app.name'));    // optional strong typing in Typ
 
 ## Loading from files
 
-To load configuration from local JSON or JavaScript files, in your project’s top-level directory (where `package.json` is located), create a `config` directory. Within that, create a `default` subdirectory, plus one directory for each `NODE_ENV` for which you need to override settings (such as `production` and `development`).
+To load configuration from local JSON, YAML, or JavaScript files, in your project’s top-level directory (where `package.json` is located), create a `config` directory. Within that, create a `default` subdirectory, plus one directory for each `NODE_ENV` for which you need to override settings (such as `production` and `development`).
 
 Finally, you can create a `local` directory which contains settings that will be applied last to override/extend any other settings. You don’t check the `local` directory into Git; each developer can have her own.
 
@@ -66,9 +66,9 @@ Finally, you can create a `local` directory which contains settings that will be
     └── local/
 ```
 
-Within the `default` directory, create as many JSON files as you want, with settings. For example, you might create a `database.json` file with your database config, and a `redis.json` file with your Redis settings.
+Within the `default` directory, create as many JSON or YAML files as you want, with settings. For example, you might create a `database.json` file with your database config, and a `redis.yaml` file with your Redis settings.
 
-If you need different settings when running in `production` or `development` mode, add files to those directories. For example, if you put `database.json` in the `development` subdirectory, those settings will be **merged with** and override any settings from `database.json` in the `default` directory.
+If you need different settings when running in `production` or `development` mode, add files to those directories. For example, if you put `database.yaml` in the `development` subdirectory, those settings will be **merged with** and override any settings from `database.json` in the `default` directory.
 
 In `default/database.json`:
 
@@ -76,10 +76,11 @@ In `default/database.json`:
 { "host": "db.local", "port": 3306 }
 ```
 
-…and in `development/database.json`:
+…and in `development/database.yaml`:
 
-```json
-{ "host": "dev.local", "debug": true }
+```yaml
+host: dev.local
+debug: true
 ```
 
 In `development` mode, this results in the following configuration:
