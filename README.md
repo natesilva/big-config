@@ -50,9 +50,9 @@ console.log(config.get('app.timezone'));
 console.log(config.get<string>('app.name'));    // optional strong typing in TypeScript
 ```
 
-## Loading from files
+## Example: Loading from files
 
-In your project’s top-level directory (where `package.json` is located), create a `config` directory. Within that, create a `default` subdirectory, plus one directory for each `NODE_ENV` for which you need to override settings (such as `production` and `development`).
+In your project’s top-level directory (where `package.json` is located), create a `config` directory. Within that, create a `default` subdirectory, plus one directory for each `NODE_ENV` (such as `production` and `development`).
 
 Finally, you can create a `local` directory with settings that will be applied last, to override/extend any other settings. Don’t check the `local` directory into Git; each developer can have her own.
 
@@ -68,12 +68,18 @@ Finally, you can create a `local` directory with settings that will be applied l
 
 Within the `default` directory, create as many JSON or YAML files as you want. For example, you might create `database.json` with your database config, and `redis.yaml` with your Redis settings.
 
-If you need different settings when running in `production` or `development` mode, add files to those directories. You can mix and match JSON, YAML, and JavaScript. For example, if you put `database.yaml` in the `development` subdirectory, those settings will be **merged with** and override any settings from `database.json` in the `default` directory.
+If you need different settings in `production` or `development` mode, add files to those directories. You can mix and match JSON, YAML, and JavaScript. For example, if you put `database.yaml` in the `development` subdirectory, those settings will be **merged with** and override any settings from `database.json` in the `default` directory.
 
 In `default/database.json`:
 
 ```json
-{ "host": "db.local", "port": 3306 }
+{
+    "host": "db.local",
+    "port": 3306,
+    "credentials": {
+        "username": "foo"
+    }
+}
 ```
 
 …and in `development/database.yaml`:
@@ -81,12 +87,22 @@ In `default/database.json`:
 ```yaml
 host: dev.local
 debug: true
+credentials:
+    password: supersecret123
 ```
 
 In `development` mode, this results in the following configuration:
 
 ```json
-{ "host": "dev.local", "port": 3306, "debug": true }
+{
+    "host": "dev.local",
+    "port": 3306,
+    "debug": true,
+    "credentials": {
+        "username": "foo",
+        "password": "supersecret123"
+    }
+}
 ```
 
 If you like, you can use JavaScript instead of JSON. Just make sure it exports a
@@ -110,7 +126,7 @@ Loading from S3 works very much like loading from files. The main differences ar
 * Only `.json` files are supported.
 * The `local` folder is not supported.
 
-Within a bucket, create a folder for your project’s configuration files. Within that folder, create a `default` folder plus `production`, `development` or any other environment-specific folder you need and place your `.json` files in those folders.
+Within a bucket, create a folder for your project’s configuration files. Within that folder, create a `default` folder plus `production`, `development` or any other environment-specific folder you need, and place your `.json` files in those folders.
 
 Initialize the loader with your bucket name and prefix. (The prefix is the folder name in S3.)
 
