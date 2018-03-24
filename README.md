@@ -105,6 +105,15 @@ In `development` mode, this results in the following configuration:
 }
 ```
 
+Then use the settings!
+
+```js
+const host = config.get('database.host');
+// "dev.local"
+const credentials = config.get('database.credentials');
+// { "username": "foo", "password": "supersecret123" }
+```
+
 If you like, you can use JavaScript instead of JSON. Just make sure it exports a
 JSON-like object:
 
