@@ -33,8 +33,11 @@ AWS.config.credentials = credentials;
 
 const config = new Config();
 
+// Load settings from files:
 config.load(new config.Loader.FilesLoader());
+// You can also load settings from env vars:
 config.load(new config.Loader.EnvironmentLoader());
+// You can load settings from S3:
 config.load(new config.Loader.S3Loader('your-bucket', 'your/prefix'));
 
 module.exports = config;
@@ -46,8 +49,10 @@ In your other files, import `./initConfig` and use the settings:
 // app.js
 const config = require('./initConfig');
 
+// get the timezone setting from app.yaml or app.json:
 console.log(config.get('app.timezone'));
-console.log(config.get<string>('app.name'));    // optional strong typing in TypeScript
+// optional strong typing in TypeScript:
+console.log(config.get<string>('app.name'));
 ```
 
 ## Example: Loading from files
