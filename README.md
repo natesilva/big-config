@@ -52,7 +52,7 @@ Create an `initConfig.js` that initializes your configuration and exports the Co
 ```javascript
 // this is initConfig.js
 const { Config, Loaders } = require('big-config');
-module.exprts = Config.create(new Loaders.FilesLoader());
+module.exports = Config.create(new Loaders.FilesLoader());
 ```
 
 In your other files, import `./initConfig` and use the settings:
