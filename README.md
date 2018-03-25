@@ -2,7 +2,7 @@
 
 > Node.js configuration loader for big projects
 
-Load JSON, YAML, and JavaScript configuration files. Supports large projects with big configuration sets, and optionally loading configurations from Amazon S3.
+Loads JSON, YAML, and JavaScript configuration files. Supports large projects with big configuration sets, in a way that you can easily manage.
 
 ## Install
 
@@ -12,54 +12,16 @@ npm i big-config
 
 ## Features
 
-* Breaks large configuration sets into smaller files.
-* Loads settings from local `.json`, `.yaml`, or `.js` files. Can also load settings from `.json` files on Amazon S3 or from environment variables.
-* Starts with a `default` configuration and adds additional customizations for the current environment, such as `development` or `production`.
-    * Without having to put all related configuration into a single huge “production” or “development” file
-* Lets developers have a custom local configuration.
+`big-config` solves problems that are common in large projects shared among several programmers:
 
-## Basic setup
+* Big projects have lots of configuration. Huge configuration files are hard to manage.
+    * Solution: `big-config` breaks your configuration into a set of smaller files. Divide your settings however you like.
+* It’s hard to keep multiple configurations in sync for production, development, and staging.
+    * Solution: `big-config` starts with a `default` configuration set and adds additional sets for the current environment, such as `development` or `production`. Settings are **merged** so that common defaults do not need to be duplicated.
+* Developers need a safe way to override settings on their local system.
+    * Solution: `big-config` gives developers a local configuration set that overrides existing settings. Local settings are not checked into Git, they can persist, and there is no risk of accidentally checking them into the project.
 
-Create an `initConfig.js` that initializes your configuration:
-
-```javascript
-// initConfig.js
-const Config = require('big-config').Config;
-const AWS = require('aws-sdk');
-
-// if you are going to use AWS, it’s up to you to set your credentials first:
-const credentials = new AWS.SharedIniFileCredentials({ profile: 'your-profile' });
-AWS.config.credentials = credentials;
-
-const config = new Config();
-
-// Load settings from files:
-config.load(new config.Loader.FilesLoader());
-// You can also load settings from env vars:
-config.load(new config.Loader.EnvironmentLoader());
-// You can load settings from S3:
-config.load(new config.Loader.S3Loader('your-bucket', 'your/prefix'));
-
-module.exports = config;
-```
-
-In your other files, import `./initConfig` and use the settings:
-
-```javascript
-// app.js
-const config = require('./initConfig');
-
-// get the timezone setting from app.yaml or app.json:
-console.log(config.get('app.timezone'));
-// optional strong typing in TypeScript:
-console.log(config.get<string>('app.name'));
-```
-
-## Example: Loading from files
-
-In your project’s top-level directory (where `package.json` is located), create a `config` directory. Within that, create a `default` subdirectory, plus one directory for each `NODE_ENV` (such as `production` and `development`).
-
-Finally, you can create a `local` directory with settings that will be applied last, to override/extend any other settings. Don’t check the `local` directory into Git; each developer can have her own.
+## How it works
 
 ```
 .
@@ -71,11 +33,46 @@ Finally, you can create a `local` directory with settings that will be applied l
     └── local/
 ```
 
-Within the `default` directory, create as many JSON or YAML files as you want. For example, you might create `database.json` with your database config, and `redis.yaml` with your Redis settings.
+In your project’s top-level directory (where `package.json` is located), create a `config` directory. Within that, create a `default` subdirectory, plus one for each `NODE_ENV` (such as `production` and `development`).
 
-If you need different settings in `production` or `development` mode, add files to those directories. You can mix and match JSON, YAML, and JavaScript. For example, if you put `database.yaml` in the `development` subdirectory, those settings will be **merged with** and override any settings from `database.json` in the `default` directory.
+Finally, you can create a `local` directory with personal settings that will be applied last, to override/extend any other settings. Don’t check the `local` directory into Git.
 
-In `default/database.json`:
+### The config files
+
+Start by creating your `default` configuration set. You can mix and match JSON, YAML, and JavaScript. For example, you might create `database.json` with your database settings, or `redis.yaml` with your Redis settings.
+
+If you need different settings in `production` or `development` mode, add files to those directories. For example, if you put `database.json` in the `production` directory, those settings will be used in production (when `NODE_ENV` is set to `production`). The settings are **merged with** and override any settings from `database.json` in the `default` directory.
+
+### Initialize
+
+Create an `initConfig.js` that initializes your configuration:
+
+```javascript
+// initConfig.js
+const Config = require('big-config').Config;
+
+const config = new Config();
+
+config.load(new config.Loader.FilesLoader());  // Load settings from files
+// you can also load from env vars and from S3 (see below)
+
+module.exports = config;
+```
+
+In your other files, import `./initConfig` and use the settings:
+
+```javascript
+const config = require('./initConfig');
+
+// gets the timezone setting from app.yaml or app.json:
+console.log(config.get('app.timezone'));
+// optional strong typing in TypeScript:
+console.log(config.get<string>('app.name'));
+```
+
+### Example
+
+Config file `default/database.json`:
 
 ```json
 {
@@ -87,7 +84,7 @@ In `default/database.json`:
 }
 ```
 
-…and in `development/database.yaml`:
+…and `development/database.yaml`:
 
 ```yaml
 host: dev.local
@@ -110,7 +107,7 @@ In `development` mode, this results in the following configuration:
 }
 ```
 
-Then use the settings!
+Then use the settings:
 
 ```js
 const host = config.get('database.host');
@@ -119,7 +116,9 @@ const credentials = config.get('database.credentials');
 // { "username": "foo", "password": "supersecret123" }
 ```
 
-If you like, you can use JavaScript instead of JSON. Just make sure it exports a
+### Using JavaScript instead of JSON/YAML
+
+You can use JavaScript instead of JSON or YAML. Just make sure it exports a
 JSON-like object:
 
 ```javascript
@@ -127,7 +126,7 @@ JSON-like object:
 module.exports = { "timezone": "Asia/Hong_Kong" };
 ```
 
-If your configuration files are located in some other directory, you can pass in the path:
+### Using a different directory for your config tree
 
 ```javascript
 config.load(new config.Loader.FilesLoader('/some/other/directory'));
@@ -159,9 +158,31 @@ settings-bucket
 
 In this example, we’ve loaded settings for two different apps into an S3 bucket named `settings-bucket`. The prefix for App 1 is `app1`.
 
+### Init with S3
+
+```javascript
+// initConfig.js
+const Config = require('big-config').Config;
+const AWS = require('aws-sdk');
+
+// set your credentials first:
+const credentials = new AWS.SharedIniFileCredentials({ profile: 'your-profile' });
+AWS.config.credentials = credentials;
+
+// init your config
+const config = new Config();
+config.load(new config.Loader.FilesLoader());  // optional: load settings from files first
+config.load(new config.Loader.S3Loader('your-bucket', 'your/prefix'));
+
+module.exports = config;
+```
+
+
 ## Loading from environment variables
 
-When loading settings from environment variables, the Node environment (such as 'production' or 'development') is ignored.
+When loading settings from environment variables, the Node environment, such as `production` or `development` is ignored. Therefore environment variables are useful mainly to override existing settings.
+
+You can load from both local files and from environment variables. The local files work as described above, and then the environment variables override those settings. This works in environments like Heroku and AWS Lambda, where settings like passwords can be passed in an environment variable.
 
 Set an environment variable with a name starting with `CONFIG__` (that’s `CONFIG` followed by two underscores), plus the path to the value, with two underscores separating each part.
 
@@ -171,25 +192,24 @@ It’s easier to see by example. To set `database.password`:
 export CONFIG__database__password=supersecret123
 ```
 
+### Init with environment variables
+
+```javascript
+// initConfig.js
+const Config = require('big-config').Config;
+
+const config = new Config();
+
+config.load(new config.Loader.FilesLoader());  // Load settings from files
+config.load(new config.Loader.EnvironmentLoader());  // Then from env vars
+
+module.exports = config;
+```
+
+### Using a different environment variable prefix
+
 If you prefer to use a different name prefix, other than `CONFIG__`, pass it to the loader constructor:
 
 ```javascript
 config.load(new config.Loader.EnvironmentLoader('MY_VARS__'));
 ```
-
-## Dealing with dependency ordering
-
-You should always create an `initConfig` module (as shown in the example at the top of this page) and use that to import `big-config` and load your settings. Your other modules then import `initConfig`—they don’t directly import `big-config`.
-
-To understand why, consider this scenario:
-
-* in `app.js` you import `big-config`
-* in `app.js` you import `./routes.js`
-    * in `./routes.js` you import `big-config` and immediately try to initialize routes using one of the values from `big-config` (but the configuration hasn’t been loaded yet!)
-* in `app.js` you load your configurations
-
-As you can see, `./routes.js` used the config _before_ it had been loaded in the main `app.js` file. To protect you from this, `big-config` will throw an error if it detects it’s being used in this way.
-
-The solution is simple. Create a module to load your settings. We called it `initConfig.js` in the example at the top of the page.
-
-Node modules are idempotent, so this ensures that (a) initialization only happens once and (b) all modules get the config object _after_ it’s been initialized.
