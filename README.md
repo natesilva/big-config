@@ -78,7 +78,7 @@ module.exports = { "timezone": "Asia/Hong_Kong" };
 ### Using a different directory for your config tree
 
 ```javascript
-const config = Config.create(new Loaders.FilesLoader('/some/other/directory'));
+Config.create(new Loaders.FilesLoader('/some/other/directory'));
 ```
 
 ## Loading from Amazon S3
