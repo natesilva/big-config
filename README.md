@@ -66,7 +66,7 @@ const db = config.get('database');
 const host = config.get('database.host');
 // "db.dev"
 // optional strong typing in TypeScript:
-const port: = config.get<number>('database.port');
+const port = config.get<number>('database.port');
 // 3306
 ```
 
