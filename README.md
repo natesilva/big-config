@@ -25,7 +25,7 @@ npm i big-config
     │── development/
     │  └── database.json   { "host": "db.dev" }
     └── local/
-       └── database.json   { "password": "supersecret123" }
+       └── database.json   { "username": "susan", "password": "supersecret123" }
 ```
 
 In your project’s top-level directory (where `package.json` is located), create a `config` directory. Within that, create a `default` subdirectory, plus one directory for each `NODE_ENV` (such as `production` and `development`).
@@ -40,7 +40,7 @@ If `NODE_ENV` is `development`, you end up with the following database settings:
 {
     "host": "db.dev",
     "port": 3306,
-    "username": "bob",
+    "username": "susan",
     "password": "supersecret123"
 }
 ```
