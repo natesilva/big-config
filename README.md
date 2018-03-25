@@ -60,7 +60,7 @@ In your other files, import `./initConfig` and use the settings:
 ```javascript
 const config = require('./initConfig');
 const db = config.get('database');
-// { "host": "db.dev", port: 3306, username: "bob", password: "supersecret123" }
+// { "host": "db.dev", port: 3306, username: "susan", password: "supersecret123" }
 const port = config.get('database.port');
 // 3306
 ```
