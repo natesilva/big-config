@@ -32,6 +32,8 @@ In your project’s top-level directory (where `package.json` is located), creat
 
 Finally, you can create a `local` directory with personal settings that will be applied last, to override/extend any other settings. Don’t check the `local` directory into Git.
 
+Settings from the `default` directory are read first. Then settings from the environment directory (`production` or `development`) are merged in, followed by settings from the `local` directory.
+
 If `NODE_ENV` is `development`, you end up with the following database settings:
 
 ```json
