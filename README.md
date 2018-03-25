@@ -59,14 +59,11 @@ module.exports = config;
 
 In your other files, import `./initConfig` and use the settings:
 
-```typescript
+```javascript
 const config = require('./initConfig');
 const db = config.get('database');
 // { "host": "db.dev", port: 3306, username: "bob", password: "supersecret123" }
-const host = config.get('database.host');
-// "db.dev"
-// optional strong typing in TypeScript:
-const port = config.get<number>('database.port');
+const port = config.get('database.port');
 // 3306
 ```
 
@@ -146,7 +143,7 @@ config.load(new config.Loader.EnvironmentLoader());  // Then from env vars
 module.exports = config;
 ```
 
-If you prefer to use a different prefix:
+### Using a different environment variable name prefix
 
 ```javascript
 config.load(new config.Loader.EnvironmentLoader('MY_CONFIG__'));
