@@ -19,14 +19,12 @@ export class FilesLoader implements LoaderInterface {
 
     if (!fs.existsSync(this.configDir)) {
       const msg = `config directory does not exist: ${this.configDir}`;
-      console.error(msg);
       throw new ConfigError(msg);
     }
 
     const stats = fs.statSync(this.configDir);
     if (!stats.isDirectory()) {
       const msg = `config path must be a directory: ${this.configDir}`;
-      console.error(msg);
       throw new ConfigError(msg);
     }
   }

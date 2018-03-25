@@ -19,6 +19,23 @@ export class Config {
     this.env = env || process.env.NODE_ENV || 'development';
   }
 
+  /**
+   * Convenience factory method. Creates a Config object and applies the given loaders,
+   * returning the initialized Config object.
+   * @param loaders the loaders to load
+   */
+  static create(loaders: LoaderInterface | LoaderInterface[]) {
+    if (!Array.isArray(loaders)) {
+      loaders = [loaders];
+    }
+
+    const result = new Config();
+    for (let loader of loaders) {
+      result.load(loader);
+    }
+    return result;
+  }
+
   /** load settings using the given Loader */
   load(loader: LoaderInterface) {
     if (this.locked) {
@@ -64,3 +81,9 @@ export class Config {
 
 /** DEPRECATED: the single global Config instance (use new Config() instead) */
 export const config = new Config();
+
+export const Loaders = {
+  FilesLoader: FilesLoader,
+  EnvironmentLoader: EnvironmentLoader,
+  S3Loader: S3Loader
+};

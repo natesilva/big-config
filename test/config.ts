@@ -13,14 +13,13 @@ import * as yaml from 'js-yaml';
 import { cloneDeep, merge } from 'lodash';
 import { suite, test, timeout } from 'mocha-typescript';
 
-import { Config } from '../src';
+import { Config, Loaders } from '../src';
 import { ConfigError } from '../src/error';
 import { expect } from 'chai';
 
 // at runtime our __dirname will be <top dir>/prod/test
 const awsConfigPath = path.join(__dirname, '..', '..', 'test', 'aws.json');
 const useAws = fs.existsSync(awsConfigPath);
-console.log({ awsConfigPath, useAws });
 let s3Prefix: string = null;
 let awsConfig: any = null;
 if (useAws) {
@@ -220,7 +219,7 @@ export class ConfigTests {
       for (let env of envs) {
         const config = new Config(env);
         const filesPath = path.join(jsonTmpDir, fixtureName);
-        config.load(new config.Loader.FilesLoader(filesPath));
+        config.load(new Loaders.FilesLoader(filesPath));
         const expected = fixture.merged[env];
         expect(config.getAll(), `${fixtureName}/${env} getAll`).to.deep.equal(expected);
         Object.keys(expected).forEach(key => {
@@ -241,7 +240,7 @@ export class ConfigTests {
       for (let env of envs) {
         const config = new Config(env);
         const filesPath = path.join(jsTmpDir, fixtureName);
-        config.load(new config.Loader.FilesLoader(filesPath));
+        config.load(new Loaders.FilesLoader(filesPath));
         const expected = fixture.merged[env];
         expect(config.getAll(), `${fixtureName}/${env} getAll`).to.deep.equal(expected);
         Object.keys(expected).forEach(key => {
@@ -262,7 +261,7 @@ export class ConfigTests {
       for (let env of envs) {
         const config = new Config(env);
         const filesPath = path.join(yamlTmpDir, fixtureName);
-        config.load(new config.Loader.FilesLoader(filesPath));
+        config.load(new Loaders.FilesLoader(filesPath));
         const expected = fixture.merged[env];
         expect(config.getAll(), `${fixtureName}/${env} getAll`).to.deep.equal(expected);
         Object.keys(expected).forEach(key => {
@@ -294,7 +293,7 @@ export class ConfigTests {
           prefix += '/';
         }
         prefix += fixtureName;
-        config.load(new config.Loader.S3Loader(awsConfig.bucketName, prefix));
+        config.load(new Loaders.S3Loader(awsConfig.bucketName, prefix));
 
         // calculate the expected result; can’t use the `merged` value that we used for
         // JSON and .js -- it incorporates any changes made by the `local` config, which
@@ -332,7 +331,7 @@ export class ConfigTests {
           prefix += '/';
         }
         prefix += fixtureName + '/';
-        config.load(new config.Loader.S3Loader(awsConfig.bucketName, prefix));
+        config.load(new Loaders.S3Loader(awsConfig.bucketName, prefix));
 
         // calculate the expected result; can’t use the `merged` value that we used for
         // JSON and .js -- it incorporates any changes made by the `local` config, which
@@ -364,8 +363,8 @@ export class ConfigTests {
 
         const config = new Config(env);
         const filesPath = path.join(jsonTmpDir, fixtureName);
-        config.load(new config.Loader.FilesLoader(filesPath));
-        config.load(new config.Loader.EnvironmentLoader());
+        config.load(new Loaders.FilesLoader(filesPath));
+        config.load(new Loaders.EnvironmentLoader());
 
         expect(config.get('database.password')).to.equal(password);
         expect(config.get('database.host')).to.equal(host);
@@ -390,8 +389,8 @@ export class ConfigTests {
 
         const config = new Config(env);
         const filesPath = path.join(jsonTmpDir, fixtureName);
-        config.load(new config.Loader.FilesLoader(filesPath));
-        config.load(new config.Loader.EnvironmentLoader('MY_CONFIG_'));
+        config.load(new Loaders.FilesLoader(filesPath));
+        config.load(new Loaders.EnvironmentLoader('MY_CONFIG_'));
 
         expect(config.get('database.password')).to.equal(password);
         expect(config.get('database.host')).to.equal(host);
@@ -406,16 +405,14 @@ export class ConfigTests {
   'missing config directory should throw'() {
     const fn = () => {
       const config = new Config();
-      config.load(
-        new config.Loader.FilesLoader('/nonexistent-path/' + shortid.generate())
-      );
+      config.load(new Loaders.FilesLoader('/nonexistent-path/' + shortid.generate()));
     };
     expect(fn).to.throw(ConfigError);
 
     const fn2 = () => {
       const config = new Config();
       // look for this very project’s config dir; this project doesn’t have one
-      config.load(new config.Loader.FilesLoader());
+      config.load(new Loaders.FilesLoader());
     };
     expect(fn2).to.throw(ConfigError);
   }
@@ -424,7 +421,7 @@ export class ConfigTests {
   'should throw if config dir name is a file instead of a dir'() {
     const fn = () => {
       const config = new Config();
-      config.load(new config.Loader.FilesLoader(__filename));
+      config.load(new Loaders.FilesLoader(__filename));
     };
     expect(fn).to.throw(ConfigError);
   }
@@ -438,11 +435,11 @@ export class ConfigTests {
       for (let env of envs) {
         const config = new Config(env);
         const filesPath = path.join(jsonTmpDir, fixtureName);
-        config.load(new config.Loader.FilesLoader(filesPath));
+        config.load(new Loaders.FilesLoader(filesPath));
         expect(config.get('database.host')).to.equal(fixture.merged[env].database.host);
 
         const fn = () => {
-          config.load(new config.Loader.FilesLoader(filesPath));
+          config.load(new Loaders.FilesLoader(filesPath));
         };
         expect(fn).to.throw(ConfigError);
       }
@@ -465,5 +462,25 @@ export class ConfigTests {
       config.getAll();
     };
     expect(fn).to.throw(ConfigError);
+  }
+
+  @test
+  'calling create() convenience function'() {
+    for (let fixtureName of Object.keys(fixtures)) {
+      const fixture = fixtures[fixtureName];
+
+      const filesPath = path.join(jsonTmpDir, fixtureName);
+      const config = Config.create(new Loaders.FilesLoader(filesPath));
+
+      const expected = fixture.merged[config.env];
+      expect(config.getAll(), `${fixtureName}/${config.env} getAll`).to.deep.equal(
+        expected
+      );
+      Object.keys(expected).forEach(key => {
+        expect(config.get(key), `${fixtureName}/${config.env}/${key}`).to.deep.equal(
+          expected[key]
+        );
+      });
+    }
   }
 }

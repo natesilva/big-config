@@ -47,14 +47,12 @@ If `NODE_ENV` is `development`, you end up with the following database settings:
 
 ### Code
 
-Create an `initConfig.js` that initializes your configuration:
+Create an `initConfig.js` that initializes your configuration and exports the Config object:
 
 ```javascript
 // this is initConfig.js
-const Config = require('big-config').Config;
-const config = new Config();
-config.load(new config.Loader.FilesLoader());  // Loads settings from the files
-module.exports = config;
+const { Config, Loaders } = require('big-config');
+module.exprts = Config.create(new Loaders.FilesLoader());
 ```
 
 In your other files, import `./initConfig` and use the settings:
@@ -71,7 +69,7 @@ const port = config.get('database.port');
 
 You can mix and match JSON, YAML, and JavaScript.
 
-If you use JavaScript, just make sure it exports a JSON-like object:
+If you use JavaScript, export a JSON-like object:
 
 ```javascript
 module.exports = { "timezone": "Asia/Hong_Kong" };
@@ -80,7 +78,7 @@ module.exports = { "timezone": "Asia/Hong_Kong" };
 ### Using a different directory for your config tree
 
 ```javascript
-config.load(new config.Loader.FilesLoader('/some/other/directory'));
+const config = Config.creeate(new Loaders.FilesLoader('/some/other/directory'));
 ```
 
 ## Loading from Amazon S3
@@ -106,18 +104,17 @@ In this example, we’ve loaded settings into an S3 bucket named `settings-bucke
 
 ```javascript
 // this is initConfig.js
-const Config = require('big-config').Config;
+const { Config, Loaders } = require('big-config');
 const AWS = require('aws-sdk');
 
 // set your credentials:
 const credentials = new AWS.SharedIniFileCredentials({ profile: 'your-profile' });
 AWS.config.credentials = credentials;
 
-const config = new Config();
-config.load(new config.Loader.FilesLoader());  // optional: load settings from files first
-config.load(new config.Loader.S3Loader('your-bucket', 'your/prefix'));
-
-module.exports = config;
+module.exports = Config.create([
+  config.load(new Loaders.FilesLoader()),  // optional: load settings from files first
+  config.load(new Loaders.S3Loader('your-bucket', 'your/prefix'))
+]);
 ```
 
 ## Loading from environment variables
@@ -135,16 +132,16 @@ export CONFIG__database__password=supersecret123
 ### Init with environment variables
 
 ```javascript
-// initConfig.js
-const Config = require('big-config').Config;
-const config = new Config();
-config.load(new config.Loader.FilesLoader());  // Load settings from files
-config.load(new config.Loader.EnvironmentLoader());  // Then from env vars
-module.exports = config;
+// this is initConfig.js
+const { Config, Loaders } = require('big-config');
+module.exports = Config.create([
+  new Loaders.FilesLoader(),  // Load settings from files
+  new Loaders.EnvironmentLoader()  // then from env vars
+]);
 ```
 
 ### Using a different environment variable name prefix
 
 ```javascript
-config.load(new config.Loader.EnvironmentLoader('MY_CONFIG__'));
+new Loaders.EnvironmentLoader('MY_CONFIG__'));
 ```
