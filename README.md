@@ -34,7 +34,7 @@ Finally, you can create a `local` directory with personal settings that will be 
 
 If `NODE_ENV` is `development`, you end up with the following database settings:
 
-```
+```json
 {
     "host": "db.dev",
     "port": 3306,
@@ -57,14 +57,15 @@ module.exports = config;
 
 In your other files, import `./initConfig` and use the settings:
 
-```javascript
+```typescript
 const config = require('./initConfig');
 const db = config.get('database');
-// { host: 'db.dev', port: 3306, username: 'bob', password: 'supersecret123' }
+// { "host": "db.dev", port: 3306, username: "bob", password: "supersecret123" }
 const host = config.get('database.host');
-// 'db.dev'
+// "db.dev"
 // optional strong typing in TypeScript:
 const port: = config.get<number>('database.port');
+// 3306
 ```
 
 ### The config files
@@ -100,7 +101,7 @@ settings-bucket
     └── production
 ```
 
-In this example, we’ve loaded settings for two different apps into an S3 bucket named `settings-bucket`. The prefix is `app1`.
+In this example, we’ve loaded settings into an S3 bucket named `settings-bucket`. The prefix is `app1`.
 
 ### Init with S3
 
