@@ -1,6 +1,6 @@
 {
   "name": "big-config",
-  "version": "1.8.0",
+  "version": "1.9.0",
   "description": "Node.js configuration loader for big projects",
   "repository": "natesilva/big-config",
   "license": "BSD-3-Clause",
