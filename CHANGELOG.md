@@ -1,3 +1,7 @@
+## 1.10.0 (2019-04-03)
+
+* Dependency updates.
+
 ## 1.6.0 (2018-03-22)
 
 * YAML configuration files are now supported. Use file extension `.yaml`.

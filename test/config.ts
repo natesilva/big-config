@@ -50,8 +50,9 @@ const fixtures = {
       },
 
       local: {
-        database: { user: 'otheruser' }
-      }
+        database: { user: 'otheruser' },
+        aws: {}
+      },
     },
 
     merged: {
