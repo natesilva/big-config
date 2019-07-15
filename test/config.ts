@@ -1,5 +1,3 @@
-// tslint:disable:no-unused-expression
-
 // In this test suite we use the Config (capital C) class directly. In user code, they’ll
 // use the single global config (lowercase c) object, which is an instance of Config.
 
@@ -52,7 +50,7 @@ const fixtures = {
       local: {
         database: { user: 'otheruser' },
         aws: {}
-      },
+      }
     },
 
     merged: {
@@ -156,11 +154,11 @@ export class ConfigTests {
         prefix += '/';
       }
 
-      for (let fixtureName of Object.keys(fixtures)) {
+      for (const fixtureName of Object.keys(fixtures)) {
         const fixture = fixtures[fixtureName].input;
         const fixtureDir = path.join(jsTmpDir, fixtureName);
 
-        for (let envName of Object.keys(fixture)) {
+        for (const envName of Object.keys(fixture)) {
           if (envName === 'local') {
             // the S3 loader doesn’t use 'local'
             continue;
@@ -168,7 +166,7 @@ export class ConfigTests {
           const env = fixture[envName];
           const ourPrefix = `${prefix}${fixtureName}/${envName}`;
 
-          for (let filename of Object.keys(env)) {
+          for (const filename of Object.keys(env)) {
             const values = env[filename];
             const key = `${ourPrefix}/${filename}.json`;
             await s3
@@ -213,11 +211,11 @@ export class ConfigTests {
 
   @test
   'load configs from .json'() {
-    for (let fixtureName of Object.keys(fixtures)) {
+    for (const fixtureName of Object.keys(fixtures)) {
       const fixture = fixtures[fixtureName];
       const envs = Object.keys(fixture.merged);
 
-      for (let env of envs) {
+      for (const env of envs) {
         const config = new Config(env);
         const filesPath = path.join(jsonTmpDir, fixtureName);
         config.load(new Loaders.FilesLoader(filesPath));
@@ -234,11 +232,11 @@ export class ConfigTests {
 
   @test
   'load configs from .js'() {
-    for (let fixtureName of Object.keys(fixtures)) {
+    for (const fixtureName of Object.keys(fixtures)) {
       const fixture = fixtures[fixtureName];
       const envs = Object.keys(fixture.merged);
 
-      for (let env of envs) {
+      for (const env of envs) {
         const config = new Config(env);
         const filesPath = path.join(jsTmpDir, fixtureName);
         config.load(new Loaders.FilesLoader(filesPath));
@@ -255,11 +253,11 @@ export class ConfigTests {
 
   @test
   'load configs from .yaml'() {
-    for (let fixtureName of Object.keys(fixtures)) {
+    for (const fixtureName of Object.keys(fixtures)) {
       const fixture = fixtures[fixtureName];
       const envs = Object.keys(fixture.merged);
 
-      for (let env of envs) {
+      for (const env of envs) {
         const config = new Config(env);
         const filesPath = path.join(yamlTmpDir, fixtureName);
         config.load(new Loaders.FilesLoader(filesPath));
@@ -279,11 +277,11 @@ export class ConfigTests {
     if (!useAws) {
       throw new Error('AWS not configured');
     }
-    for (let fixtureName of Object.keys(fixtures)) {
+    for (const fixtureName of Object.keys(fixtures)) {
       const fixture = fixtures[fixtureName];
       const envs = Object.keys(fixture.merged);
 
-      for (let env of envs) {
+      for (const env of envs) {
         if (env === 'local') {
           // the S3 loader doesn’t support 'local'
           continue;
@@ -317,11 +315,11 @@ export class ConfigTests {
     if (!useAws) {
       throw new Error('AWS not configured');
     }
-    for (let fixtureName of Object.keys(fixtures)) {
+    for (const fixtureName of Object.keys(fixtures)) {
       const fixture = fixtures[fixtureName];
       const envs = Object.keys(fixture.merged);
 
-      for (let env of envs) {
+      for (const env of envs) {
         if (env === 'local') {
           // the S3 loader doesn’t support 'local'
           continue;
@@ -352,11 +350,11 @@ export class ConfigTests {
 
   @test
   'augment settings with environment variables'() {
-    for (let fixtureName of Object.keys(fixtures)) {
+    for (const fixtureName of Object.keys(fixtures)) {
       const fixture = fixtures[fixtureName];
       const envs = Object.keys(fixture.merged);
 
-      for (let env of envs) {
+      for (const env of envs) {
         const password = shortid.generate();
         const host = shortid.generate();
         process.env.CONFIG__database__host = host;
@@ -378,11 +376,11 @@ export class ConfigTests {
 
   @test
   'environment variables can be renamed'() {
-    for (let fixtureName of Object.keys(fixtures)) {
+    for (const fixtureName of Object.keys(fixtures)) {
       const fixture = fixtures[fixtureName];
       const envs = Object.keys(fixture.merged);
 
-      for (let env of envs) {
+      for (const env of envs) {
         const password = shortid.generate();
         const host = shortid.generate();
         process.env.MY_CONFIG_database__host = host;
@@ -429,11 +427,11 @@ export class ConfigTests {
 
   @test
   'settings can’t be changed after they are accessed'() {
-    for (let fixtureName of Object.keys(fixtures)) {
+    for (const fixtureName of Object.keys(fixtures)) {
       const fixture = fixtures[fixtureName];
       const envs = Object.keys(fixture.merged);
 
-      for (let env of envs) {
+      for (const env of envs) {
         const config = new Config(env);
         const filesPath = path.join(jsonTmpDir, fixtureName);
         config.load(new Loaders.FilesLoader(filesPath));
@@ -467,7 +465,7 @@ export class ConfigTests {
 
   @test
   'calling create() convenience function'() {
-    for (let fixtureName of Object.keys(fixtures)) {
+    for (const fixtureName of Object.keys(fixtures)) {
       const fixture = fixtures[fixtureName];
 
       const filesPath = path.join(jsonTmpDir, fixtureName);

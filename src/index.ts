@@ -30,7 +30,7 @@ export class Config {
     }
 
     const result = new Config();
-    for (let loader of loaders) {
+    for (const loader of loaders) {
       result.load(loader);
     }
     return result;

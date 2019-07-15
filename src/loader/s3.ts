@@ -70,7 +70,7 @@ export class S3Loader implements LoaderInterface {
     const loadedKeys = new Map(await Promise.all(promises));
 
     // now build the resulting settings object by applying the loaded data in order
-    for (let key of keysToLoad) {
+    for (const key of keysToLoad) {
       let baseKeyName = path.basename(key, path.extname(key));
       settings = merge(settings, { [baseKeyName]: loadedKeys.get(key) });
     }
