@@ -16,6 +16,8 @@
   "main": "prod/src/index.js",
   "types": "prod/src/index.d.ts",
   "scripts": {
+    "clean": "rimraf prod",
+    "build": "tsc",
     "test": "tsc && nyc --reporter lcov --reporter text mocha ./prod/test",
     "prepare": "rimraf prod && tsc",
     "prettier": "prettier --write \"{src,test}/**/*.?(ts|json)\""
@@ -27,28 +29,29 @@
     "@types/chai": "^4.1.7",
     "@types/chai-as-promised": "^7.1.0",
     "@types/js-yaml": "^3.12.1",
-    "@types/lodash": "^4.14.123",
-    "@types/node": "^11.13.0",
+    "@types/lodash": "^4.14.136",
+    "@types/node": "^12.6.3",
     "@types/shortid": "0.0.29",
     "@types/tmp": "^0.1.0",
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
-    "mocha": "^6.0.2",
+    "mocha": "^6.1.4",
     "mocha-typescript": "^1.1.17",
-    "nyc": "^13.3.0",
-    "prettier": "^1.16.4",
+    "np": "^5.0.3",
+    "nyc": "^14.1.1",
+    "prettier": "^1.18.2",
     "rimraf": "^2.6.3",
     "shortid": "^2.2.14",
     "tmp": "^0.1.0",
-    "ts-node": "^8.0.3",
-    "tslint": "^5.15.0",
-    "typescript": "^3.4.1"
+    "ts-node": "^8.3.0",
+    "tslint": "^5.18.0",
+    "typescript": "^3.5.3"
   },
   "dependencies": {
-    "aws-sdk": "^2.435.0",
-    "deasync": "^0.1.14",
-    "js-yaml": "^3.13.0",
-    "lodash": "^4.17.11",
-    "strip-json-comments": "^2.0.1"
+    "aws-sdk": "^2.493.0",
+    "deasync": "^0.1.15",
+    "js-yaml": "^3.13.1",
+    "lodash": "^4.17.14",
+    "strip-json-comments": "^3.0.1"
   }
 }
