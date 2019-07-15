@@ -4,6 +4,8 @@
 
 Loads JSON, YAML, and JavaScript configuration files. Supports large projects with big configuration sets. Settings can also be loaded from S3 or from environment variables.
 
+Settings are **merged** with inherited default settings, making it possible to support multiple environments with a minimum amount of duplication.
+
 ## Install
 
 ```
@@ -36,12 +38,12 @@ Settings from the `default` directory are read first. Then settings from the env
 
 If `NODE_ENV` is `development`, you end up with the following database settings:
 
-```json
+```yaml
 {
-    "host": "db.dev",
-    "port": 3306,
-    "username": "susan",
-    "password": "supersecret123"
+    "host": "db.dev",              # from config/development/database.json
+    "port": 3306,                  # from config/default/database.json
+    "username": "susan",           # from config/local/database.json
+    "password": "supersecret123"   # from config/local/database.json
 }
 ```
 
