@@ -1,4 +1,4 @@
-## 3.0.0.beta.0
+## 3.0.0-beta.1
 
 This is a major rewrite and simplification of the code.
 
