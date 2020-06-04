@@ -7,6 +7,7 @@
     "preserveConstEnums": true,
     "strictNullChecks": true,
     "sourceMap": true,
+    "declaration": true,
     "target": "es2017",
     "outDir": "build",
     "moduleResolution": "node",
