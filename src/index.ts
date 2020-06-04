@@ -33,7 +33,7 @@ export class Config {
   private readonly settings: Record<string, unknown>;
 
   /** Initialize the config system. Synchronously builds the entire config tree. */
-  constructor(options: Options) {
+  constructor(options?: Options) {
     const resolvedOptions = { ...DEFAULT_OPTIONS, ...options };
 
     const defaultDir = path.resolve(resolvedOptions.dir, 'default');
