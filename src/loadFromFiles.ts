@@ -1,3 +1,4 @@
+import * as assert from 'assert';
 import * as fs from 'fs';
 import * as yaml from 'js-yaml';
 import * as JSON5 from 'json5';
@@ -66,9 +67,8 @@ export default function loadFromFiles(dir: string, enableJs = false) {
           break;
       }
     } catch (err) {
-      if (err instanceof Error) {
-        err.message = `during import of ${fullPath}: ${err.message}`;
-      }
+      assert(err instanceof Error);
+      err.message = `during import of ${fullPath}: ${err.message}`;
       throw err;
     }
   });

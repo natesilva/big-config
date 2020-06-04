@@ -18,8 +18,8 @@ describe('loadFromFiles', () => {
           fileType: 'json',
           host: 'the db host',
           username: 'the db username',
-          port: 3306,
-        },
+          port: 3306
+        }
       });
     });
 
@@ -31,8 +31,8 @@ describe('loadFromFiles', () => {
           fileType: 'json5',
           host: 'the db host',
           username: 'the db username',
-          port: 3306,
-        },
+          port: 3306
+        }
       });
     });
 
@@ -44,8 +44,8 @@ describe('loadFromFiles', () => {
           fileType: 'yaml',
           host: 'the db host',
           username: 'the db username',
-          port: 3306,
-        },
+          port: 3306
+        }
       });
     });
 
@@ -57,8 +57,8 @@ describe('loadFromFiles', () => {
           fileType: 'yml',
           host: 'the db host',
           username: 'the db username',
-          port: 3306,
-        },
+          port: 3306
+        }
       });
     });
   });
@@ -105,8 +105,8 @@ describe('loadFromFiles', () => {
           fileType: 'js',
           host: 'the db host',
           username: 'the db username',
-          port: 3306,
-        },
+          port: 3306
+        }
       });
     });
 
@@ -114,6 +114,40 @@ describe('loadFromFiles', () => {
       const fixtureDir = path.resolve(__dirname, 'fixtures', 'fileTypes', 'js');
       const config = loadFromFiles(fixtureDir, false); // ← ← ← this is set to false
       assert.deepStrictEqual(config, {});
+    });
+  });
+
+  describe('parsing errors', () => {
+    it('should include the offending filename in the error message for JSON parsing errors', () => {
+      const fixtureDir = path.resolve(__dirname, 'fixtures', 'bad', 'json');
+      assert.throws(
+        () => loadFromFiles(fixtureDir),
+        (err: Error) => /fixtures\/bad\/json\/db\.json/.test(err.message)
+      );
+    });
+
+    it('should include the offending filename in the error message for YAML parsing errors', () => {
+      const fixtureDir = path.resolve(__dirname, 'fixtures', 'bad', 'yaml');
+      assert.throws(
+        () => loadFromFiles(fixtureDir),
+        (err: Error) => /fixtures\/bad\/yaml\/db\.yaml/.test(err.message)
+      );
+    });
+
+    it('should include the offending filename in the error message for JSON5 parsing errors', () => {
+      const fixtureDir = path.resolve(__dirname, 'fixtures', 'bad', 'json5');
+      assert.throws(
+        () => loadFromFiles(fixtureDir),
+        (err: Error) => /fixtures\/bad\/json5\/db\.json5/.test(err.message)
+      );
+    });
+
+    it('should include the offending filename in the error message for JavaScript parsing errors', () => {
+      const fixtureDir = path.resolve(__dirname, 'fixtures', 'bad', 'js');
+      assert.throws(
+        () => loadFromFiles(fixtureDir, true),
+        (err: Error) => /fixtures\/bad\/js\/db\.js/.test(err.message)
+      );
     });
   });
 });
