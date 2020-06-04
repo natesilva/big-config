@@ -1,7 +1,7 @@
 {
   "name": "big-config",
   "version": "3.0.0-beta.1",
-  "description": "Node.js configuration loader for big projects",
+  "description": "Easily manage configuration settings for small to very large projects",
   "repository": "natesilva/big-config",
   "license": "BSD-3-Clause",
   "author": "Nate Silva <nate@natesilva.com>",
