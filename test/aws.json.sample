@@ -1,7 +1,0 @@
-{
-  "note": "copy this file to aws.json and fill in the details",
-  "accessKeyId": "your access key id",
-  "secretAccessKey": "your secret access key",
-  "bucketName": "your bucket where test files will be created",
-  "prefix": "the prefix (folder) in your bucket where test files will be created"
-}

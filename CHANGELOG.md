@@ -1,3 +1,12 @@
+## 3.0.0.beta.0
+
+This is a major rewrite and simplification of the code.
+
+- Node 10.10 is now the minimum supported version.
+- S3 is no longer supported and the `deasync` dependency is removed.
+- JSON5 is now supported, in addition to JSON and YAML.
+- Loading from JavaScript (.js) files is supported, but deprecated.
+
 ## 2.0.0 (2019-07-15)
 
 - Node 10 is now the minimum supported version.

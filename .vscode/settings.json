@@ -5,10 +5,13 @@
   "files.trimTrailingWhitespace": true,
   "files.insertFinalNewline": true,
   "files.exclude": {
-    "**/prod": true,
+    "**/build": true,
     "**/node_modules": true,
     "**/coverage": true,
     "**/.nyc_output": true
+  },
+  "search.exclude": {
+    "package-lock.json": true
   },
   "tslint.autoFixOnSave": true,
   "typescript.tsdk": "./node_modules/typescript/lib",
@@ -16,7 +19,6 @@
   "files.defaultLanguage": "typescript",
   "files.eol": "\n",
   "editor.wordWrapColumn": 90,
-  "editor.rulers": [
-    90
-  ]
+  "editor.rulers": [90],
+  "deno.enable": false
 }

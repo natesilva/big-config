@@ -1,16 +1,16 @@
 {
-  "include": [
-    "src/**/*",
-    "test/**/*"
-  ],
+  "include": ["src/**/*.ts", "test/**/*.ts"],
   "compilerOptions": {
-    "outDir": "prod",
-    "target": "ES2016",
-    "module": "commonjs",
-    "sourceMap": true,
-    "lib": ["es2016"],
+    "rootDir": ".",
+    "forceConsistentCasingInFileNames": true,
     "noImplicitReturns": true,
-    "experimentalDecorators": true,
-    "declaration": true
+    "preserveConstEnums": true,
+    "strictNullChecks": true,
+    "sourceMap": true,
+    "target": "es2017",
+    "outDir": "build",
+    "moduleResolution": "node",
+    "lib": ["es2017"],
+    "module": "commonjs"
   }
 }

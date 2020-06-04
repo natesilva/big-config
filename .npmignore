@@ -1,11 +1,10 @@
-# nyc test coverage report
-.nyc_output
-coverage
-
-# editor settings
-.vscode
+src
 .editorconfig
-
-# unit tests
+.eslint*
+.mocharc.json
+.nyc_output
+.prettierrc.json
+.vscode
+coverage
 test
-test/aws.json
+tsconfig.json

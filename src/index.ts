@@ -1,89 +1,70 @@
 import { cloneDeep, get, merge } from 'lodash';
+import * as path from 'path';
+import loadFromEnv from './loadFromEnv';
+import loadFromFiles from './loadFromFiles';
 
-import { ConfigError } from './error';
-import { EnvironmentLoader } from './loader/environment';
-import { FilesLoader } from './loader/files';
-import { LoaderInterface } from './loader/interface';
-import { S3Loader } from './loader/s3';
-
-export class Config {
-  private settings: any = {};
-  // the first time get() or getAll() are called, settings are locked and can’t be changed
-  private locked = false;
-  // detect if load has ever been called; calling get() before load() is an error
-  private hasCalledLoad = false;
-  /** the detected environment (such as development, production, or staging) */
-  public readonly env: string;
-
-  constructor(env?: string) {
-    this.env = env || process.env.NODE_ENV || 'development';
-  }
-
+export interface Options {
   /**
-   * Convenience factory method. Creates a Config object and applies the given loaders,
-   * returning the initialized Config object.
-   * @param loaders the loaders to load
+   * The base directory from which to recursively load configurations (default: a
+   * directory named `config`, located in the working directory, typically the top level
+   * of your project)
    */
-  static create(loaders: LoaderInterface | LoaderInterface[]) {
-    if (!Array.isArray(loaders)) {
-      loaders = [loaders];
-    }
-
-    const result = new Config();
-    for (const loader of loaders) {
-      result.load(loader);
-    }
-    return result;
-  }
-
-  /** load settings using the given Loader */
-  load(loader: LoaderInterface) {
-    if (this.locked) {
-      const msg = 'settings are locked and can’t be updated once they have been accessed';
-      throw new ConfigError(msg);
-    }
-
-    this.hasCalledLoad = true;
-    const configValues = loader.load(this.env);
-    this.settings = merge(this.settings, configValues);
-  }
-
+  dir?: string;
   /**
-   * get a configuration setting
-   * @param key the configuration setting to retrieve
+   * If true, enable loading from JavaScript files by using require(). This eval-like
+   * behavior is deprecated and potentially unsafe. (default: false)
    */
-  get<T = any>(key: string): T {
-    if (!this.hasCalledLoad) {
-      const msg = 'attempt to access config settings before they have been loaded';
-      throw new ConfigError(msg);
-    }
-    this.locked = true;
-    return cloneDeep(get(this.settings, key));
-  }
-
-  /** get all settings */
-  getAll() {
-    if (!this.hasCalledLoad) {
-      const msg = 'attempt to access config settings before they have been loaded';
-      throw new ConfigError(msg);
-    }
-    this.locked = true;
-    return cloneDeep(this.settings);
-  }
-
-  /** the available loader classes */
-  public readonly Loader = {
-    FilesLoader: FilesLoader,
-    EnvironmentLoader: EnvironmentLoader,
-    S3Loader: S3Loader
-  };
+  enableJs?: boolean;
+  /**
+   * The prefix for environment variable names that will be merged with and override any
+   * values loaded from configuration files. (default: CONFIG__).
+   */
+  prefix?: string;
 }
 
-/** DEPRECATED: the single global Config instance (use new Config() instead) */
-export const config = new Config();
-
-export const Loaders = {
-  FilesLoader: FilesLoader,
-  EnvironmentLoader: EnvironmentLoader,
-  S3Loader: S3Loader
+const DEFAULT_OPTIONS: Required<Options> = {
+  dir: path.resolve(process.cwd(), 'config'),
+  enableJs: false,
+  prefix: 'CONFIG__',
 };
+
+export class Config {
+  public readonly env = process.env.NODE_ENV || 'development';
+  private readonly settings: Record<string, unknown>;
+
+  /** Initialize the config system. Synchronously builds the entire config tree. */
+  constructor(options: Options) {
+    const resolvedOptions = { ...DEFAULT_OPTIONS, ...options };
+
+    const defaultDir = path.resolve(resolvedOptions.dir, 'default');
+    const envDir = path.resolve(resolvedOptions.dir, this.env);
+    const localDir = path.resolve(resolvedOptions.dir, 'local');
+
+    if (resolvedOptions.enableJs) {
+      console.warn(
+        '[big-config] enabling potentially unsafe parsing of .js files because the ' +
+          'enableJs option is true'
+      );
+    }
+
+    this.settings = loadFromFiles(defaultDir, resolvedOptions.enableJs);
+    this.settings = merge(this.settings, loadFromFiles(envDir, resolvedOptions.enableJs));
+    this.settings = merge(
+      this.settings,
+      loadFromFiles(localDir, resolvedOptions.enableJs)
+    );
+
+    this.settings = merge(this.settings, loadFromEnv(resolvedOptions.prefix));
+  }
+
+  /** Get the complete settings tree. */
+  get(): Record<string, unknown>;
+  /** Get a specific setting. A dot-separated path may be used to access nested values. */
+  get<T>(key: string): T;
+  get<T>(key?: string): T | Record<string, unknown> {
+    if (typeof key !== 'string') {
+      return cloneDeep(this.settings);
+    }
+    return cloneDeep(get(this.settings, key) as T);
+  }
+}

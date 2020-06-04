@@ -1,5 +1,7 @@
 {
   "recommendations": [
-    "eg2.tslint"
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode",
+    "mrmlnc.vscode-json5"
   ]
 }
