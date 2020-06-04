@@ -68,7 +68,7 @@ const port = config.get('database.port');
 
 ### Organizing settings
 
-You’re free to organize settings how you wish. For a small project, you could place all settings in one file, `config/default/settings.json`. Then you could override specific settings for for a particular environment. For example, you could customize settings for `development` by putting the overrides in `config/development/settings.json`.
+You’re free to organize settings how you wish. For a small project, you might place all settings in one file, `config/default/settings.json`. Then you would override specific settings for for a particular environment. For example, custom settings for `development` would be found in `config/development/settings.json`.
 
 For larger projects, it’s recommended to break up settings into groups. For example, `config/default/db.json` would have database settings and `config/default/logging.json` would have logging settings. If you need to override these settings for production you would do so in `config/production/db.json` or `config/production/logging.json`.
 
@@ -91,7 +91,7 @@ console.log(config.get('greetings.Japanese')); // こんにちは世界 perhaps
 ```
 
 > **Q:** Why is the settings tree built synchronously?
-> 
+>
 > **A:** This ensures that all of your settings are immediately available without having to `await` anything. In large projects it can be tricky to arrange for a Promise to be resolved at the right time in your startup code, so we avoid that.
 
 ### The config files
@@ -100,7 +100,7 @@ You can mix and match JSON, [JSON5](https://github.com/json5/json5), and YAML.
 
 It’s even okay to mix and match these file types for different environments. For example, if you have a file called `config/default/db.json5`, it’s okay to override it with `config/production/db.yaml`.
 
-It’s *not* okay to have multiple files with similar names in the *same* environment. For example, if you had `db.json` and `db.yaml`, both in the `/config/staging` directory, `big-config` will warn you  about it. `big-config` does its best to return deterministic results if this happens, but it could lead to some very confusing situations, so it’s not recommended.
+It’s *not* okay to have multiple files with similar names in the *same* environment. For example, if you had `db.json` and `db.yaml`, both in the `/config/staging` directory, `big-config` will warn you  about it. `big-config` does its best to return deterministic results if this happens, but it can lead to some very confusing situations, so it’s not recommended.
 
 ### Using a different directory for your config tree
 
