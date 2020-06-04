@@ -24,12 +24,12 @@ export default function loadFromFiles(dir: string, enableJs = false) {
 
   const filenames = fs
     .readdirSync(dir, { withFileTypes: true })
-    .filter((x) => x.isFile())
+    .filter(x => x.isFile())
     .sort((a, b) => a.name.localeCompare(b.name));
 
   const seen: Record<string, string[]> = {};
 
-  filenames.forEach((dirent) => {
+  filenames.forEach(dirent => {
     const basename = path.basename(dirent.name, path.extname(dirent.name));
     const fullPath = path.resolve(dir, dirent.name);
     const ext = path.extname(fullPath);
@@ -42,7 +42,6 @@ export default function loadFromFiles(dir: string, enableJs = false) {
 
     try {
       switch (ext) {
-        case '.json':
         case '.json5':
           {
             const input = fs.readFileSync(fullPath, 'utf8');
@@ -50,12 +49,13 @@ export default function loadFromFiles(dir: string, enableJs = false) {
           }
           break;
 
+        case '.json':
         case '.yml':
         case '.yaml':
-          results[basename] = yaml.safeLoad(fs.readFileSync(fullPath, 'utf8')) as Record<
-            string,
-            unknown
-          >;
+          {
+            const input = fs.readFileSync(fullPath, 'utf8');
+            results[basename] = yaml.safeLoad(input) as Record<string, unknown>;
+          }
           break;
 
         case '.js':
