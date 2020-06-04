@@ -100,7 +100,7 @@ You can mix and match JSON, [JSON5](https://github.com/json5/json5), and YAML.
 
 It’s even okay to mix and match these file types for different environments. For example, if you have a file called `config/default/db.json5`, it’s okay to override it with `config/production/db.yaml`.
 
-It’s *not* okay to have multiple files with similar names in the *same* environment. For example, if you had `db.json` and `db.yaml`, both in the `/config/staging` directory, `big-config` will warn you  about it. `big-config` does its best to return deterministic results if this happens, but it can lead to some very confusing situations, so it’s not recommended.
+It’s *not* okay to have multiple files with similar names in the *same* environment. For example, if you had `db.json` and `db.yaml`, both in the `/config/staging` directory, you will get a warning. `big-config` does its best to return deterministic results if this happens, but it can lead to some very confusing situations, so it’s not recommended.
 
 ### Using a different directory for your config tree
 
