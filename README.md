@@ -38,9 +38,7 @@ Finally, you can create a `local` directory with personal settings that will be 
 
 Settings from the `default` directory are read first. Then settings from the environment directory (`production` or `development`) are merged in, followed by settings from the `local` directory.
 
-The selected environment is specified using the `NODE_ENV` environment variable, first made popular by Express.
-
-If `NODE_ENV` is set to `development`, you end up with the following database settings:
+The selected environment is specified using the `NODE_ENV` environment variable. If `NODE_ENV` is set to `development`, you will end up with the following database settings:
 
 ```yaml
 {
