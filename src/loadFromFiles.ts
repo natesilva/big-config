@@ -40,29 +40,36 @@ export default function loadFromFiles(dir: string, enableJs = false) {
       seen[basename] = [dirent.name];
     }
 
-    switch (ext) {
-      case '.json':
-      case '.json5':
-        {
-          const input = fs.readFileSync(fullPath, 'utf8');
-          results[basename] = JSON5.parse(input) as Record<string, unknown>;
-        }
-        break;
+    try {
+      switch (ext) {
+        case '.json':
+        case '.json5':
+          {
+            const input = fs.readFileSync(fullPath, 'utf8');
+            results[basename] = JSON5.parse(input) as Record<string, unknown>;
+          }
+          break;
 
-      case '.yml':
-      case '.yaml':
-        results[basename] = yaml.safeLoad(fs.readFileSync(fullPath, 'utf8')) as Record<
-          string,
-          unknown
-        >;
-        break;
+        case '.yml':
+        case '.yaml':
+          results[basename] = yaml.safeLoad(fs.readFileSync(fullPath, 'utf8')) as Record<
+            string,
+            unknown
+          >;
+          break;
 
-      case '.js':
-        if (enableJs) {
-          // eslint-disable-next-line @typescript-eslint/no-var-requires
-          results[basename] = cloneDeep(require(fullPath) as Record<string, unknown>);
-        }
-        break;
+        case '.js':
+          if (enableJs) {
+            // eslint-disable-next-line @typescript-eslint/no-var-requires
+            results[basename] = cloneDeep(require(fullPath) as Record<string, unknown>);
+          }
+          break;
+      }
+    } catch (err) {
+      if (err instanceof Error) {
+        err.message = `during import of ${fullPath}: ${err.message}`;
+      }
+      throw err;
     }
   });
 
