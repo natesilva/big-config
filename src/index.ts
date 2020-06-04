@@ -29,6 +29,7 @@ const DEFAULT_OPTIONS: Required<Options> = {
 };
 
 export class Config {
+  /** the currently-active environment */
   public readonly env = process.env.NODE_ENV || 'development';
   private readonly settings: Record<string, unknown>;
 
