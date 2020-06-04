@@ -11,7 +11,7 @@ This system works well for small projects, as well as huge multi-developer syste
 ## Install
 
 ```
-npm i big-config
+npm i big-config@3.0.0-beta.1
 ```
 
 ## Example
