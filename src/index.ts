@@ -1,5 +1,6 @@
 import { cloneDeep, get, merge } from 'lodash';
 import * as path from 'path';
+import { JsonValue } from 'type-fest';
 import loadFromEnv from './loadFromEnv';
 import loadFromFiles from './loadFromFiles';
 
@@ -31,7 +32,7 @@ const DEFAULT_OPTIONS: Required<Options> = {
 export class Config {
   /** the currently-active environment */
   public readonly env = process.env.NODE_ENV || 'development';
-  private readonly settings: Record<string, unknown>;
+  private readonly settings: Record<string, JsonValue>;
 
   /** Initialize the config system. Synchronously builds the entire config tree. */
   constructor(options?: Options) {
@@ -59,10 +60,10 @@ export class Config {
   }
 
   /** Get the complete settings tree. */
-  get(): Record<string, unknown>;
+  get(): Record<string, JsonValue>;
   /** Get a specific setting. A dot-separated path may be used to access nested values. */
-  get<T>(key: string): T;
-  get<T>(key?: string): T | Record<string, unknown> {
+  get<T extends JsonValue>(key: string): T | undefined;
+  get<T extends JsonValue>(key?: string): T | Record<string, JsonValue> | undefined {
     if (typeof key !== 'string') {
       return cloneDeep(this.settings);
     }

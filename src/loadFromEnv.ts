@@ -1,7 +1,7 @@
 import { set } from 'lodash';
 
 export default function loadFromEnv(prefix: string) {
-  const settings = {};
+  const settings: Record<string, string> = {};
 
   for (const key of Object.keys(process.env)) {
     if (key.startsWith(prefix)) {

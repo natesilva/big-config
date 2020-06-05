@@ -4,6 +4,7 @@ import * as yaml from 'js-yaml';
 import * as JSON5 from 'json5';
 import { cloneDeep } from 'lodash';
 import * as path from 'path';
+import { JsonValue } from 'type-fest';
 
 /**
  * Load configuration settings from a directory containing configuration files.
@@ -13,7 +14,7 @@ import * as path from 'path';
  *  eval-like behavior is deprecated and potentially unsafe.
  */
 export default function loadFromFiles(dir: string, enableJs = false) {
-  const results: Record<string, unknown> = {};
+  const results: Record<string, JsonValue> = {};
 
   if (!fs.existsSync(dir)) {
     return results;
@@ -46,7 +47,7 @@ export default function loadFromFiles(dir: string, enableJs = false) {
         case '.json5':
           {
             const input = fs.readFileSync(fullPath, 'utf8');
-            results[basename] = JSON5.parse(input) as Record<string, unknown>;
+            results[basename] = JSON5.parse(input) as Record<string, JsonValue>;
           }
           break;
 
@@ -55,14 +56,14 @@ export default function loadFromFiles(dir: string, enableJs = false) {
         case '.yaml':
           {
             const input = fs.readFileSync(fullPath, 'utf8');
-            results[basename] = yaml.safeLoad(input) as Record<string, unknown>;
+            results[basename] = yaml.safeLoad(input) as Record<string, JsonValue>;
           }
           break;
 
         case '.js':
           if (enableJs) {
             // eslint-disable-next-line @typescript-eslint/no-var-requires
-            results[basename] = cloneDeep(require(fullPath) as Record<string, unknown>);
+            results[basename] = cloneDeep(require(fullPath) as Record<string, JsonValue>);
           }
           break;
       }
