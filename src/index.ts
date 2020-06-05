@@ -19,6 +19,8 @@ export type ConfigValue =
   | ConfigObject
   | ConfigArray;
 
+const MISSING_VALUE = Symbol('MISSING_VALUE');
+
 export interface Options {
   /**
    * The base directory from which to recursively load configurations (default: a
@@ -83,5 +85,95 @@ export class Config {
       return cloneDeep(this.settings);
     }
     return cloneDeep(get(this.settings, key) as T);
+  }
+
+  /**
+   * Get a specific setting. If it is not found, throw an Error. A dot-separated path may
+   * be used to access nested values.
+   *
+   * @returns the requested value, if found
+   * @throws if the requested value was not found
+   */
+  getOrFail<T extends ConfigValue>(key: string): T {
+    const value = get(this.settings, key, MISSING_VALUE) as unknown;
+    if (value === MISSING_VALUE) {
+      throw new Error(`[big-config] value not found for key ${key}`);
+    }
+    return value as T;
+  }
+
+  /**
+   * Get a setting known to be a string. If it is not defined or not a string, an Error is
+   * thrown.
+   *
+   * @returns the requested value, if found and is a string
+   * @throws if the requested value was not found or not a string
+   */
+  getString(key: string): string {
+    const value = this.getOrFail(key) as unknown;
+    if (typeof value !== 'string') {
+      throw new Error(`[big-config] value for key ${key} is not a string`);
+    }
+    return value;
+  }
+
+  /**
+   * Get a setting known to be a number. If it is not defined or not a number, an Error is
+   * thrown.
+   *
+   * @returns the requested value, if found and is a number
+   * @throws if the requested value was not found or not a number
+   */
+  getNumber(key: string): number {
+    const value = this.getOrFail(key) as unknown;
+    if (typeof value !== 'number') {
+      throw new Error(`[big-config] value for key ${key} is not a number`);
+    }
+    return value;
+  }
+
+  /**
+   * Get a setting known to be a boolean. If it is not defined or not a boolean, an Error
+   * is thrown.
+   *
+   * @returns the requested value, if found and is a boolean
+   * @throws if the requested value was not found or not a boolean
+   */
+  getBoolean(key: string): boolean {
+    const value = this.getOrFail(key) as unknown;
+    if (typeof value !== 'boolean') {
+      throw new Error(`[big-config] value for key ${key} is not a boolean`);
+    }
+    return value;
+  }
+
+  /**
+   * Get a setting known to be an array. If it is not defined or not an array, an Error
+   * is thrown.
+   *
+   * @returns the requested value, if found and is a boolean
+   * @throws if the requested value was not found or not a boolean
+   */
+  getArray<T>(key: string): T[] {
+    const value = this.getOrFail(key) as unknown;
+    if (!Array.isArray(value)) {
+      throw new Error(`[big-config] value for key ${key} is not an array`);
+    }
+    return value as T[];
+  }
+
+  /**
+   * Get a setting known to be a Buffer. If it is not defined or not a Buffer, an Error is
+   * thrown.
+   *
+   * @returns the requested value, if found and is a Buffer
+   * @throws if the requested value was not found or not a Buffer
+   */
+  getBuffer(key: string): Buffer {
+    const value = this.getOrFail(key) as unknown;
+    if (!Buffer.isBuffer(value)) {
+      throw new Error(`[big-config] value for key ${key} is not a Buffer`);
+    }
+    return value;
   }
 }
