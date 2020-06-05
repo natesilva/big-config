@@ -1,0 +1,9 @@
+---
+string: This is a string.
+number: 42
+boolean: false
+buffer: !!binary 'aGVsbG8gd29ybGQ='
+array:
+  - Nebraska
+  - North Dakota
+  - Nunavut
