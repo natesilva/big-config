@@ -2,7 +2,7 @@ import * as assert from 'assert';
 import { afterEach, describe, it } from 'mocha';
 import * as path from 'path';
 import * as td from 'testdouble';
-import { Config } from '../src';
+import { Config } from '../src/config';
 
 describe('Config class', () => {
   afterEach(() => {
