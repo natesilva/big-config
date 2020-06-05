@@ -1,8 +1,23 @@
 import { cloneDeep, get, merge } from 'lodash';
 import * as path from 'path';
-import { JsonValue } from 'type-fest';
 import loadFromEnv from './loadFromEnv';
 import loadFromFiles from './loadFromFiles';
+
+/**
+ * The possible types that can be stored in a configuration. We support anything YAML
+ * does. YAML is mostly JSON, plus Buffer, which is returned for !!binary strings.
+ *
+ */
+export interface ConfigArray extends Array<ConfigValue> {} // eslint-disable-line
+export type ConfigObject = { [Key in string]?: ConfigValue };
+export type ConfigValue =
+  | string
+  | number
+  | boolean
+  | null
+  | Buffer
+  | ConfigObject
+  | ConfigArray;
 
 export interface Options {
   /**
@@ -32,7 +47,7 @@ const DEFAULT_OPTIONS: Required<Options> = {
 export class Config {
   /** the currently-active environment */
   public readonly env = process.env.NODE_ENV || 'development';
-  private readonly settings: Record<string, JsonValue>;
+  private readonly settings: ConfigValue;
 
   /** Initialize the config system. Synchronously builds the entire config tree. */
   constructor(options?: Options) {
@@ -60,10 +75,10 @@ export class Config {
   }
 
   /** Get the complete settings tree. */
-  get(): Record<string, JsonValue>;
+  get(): ConfigValue;
   /** Get a specific setting. A dot-separated path may be used to access nested values. */
-  get<T extends JsonValue>(key: string): T | undefined;
-  get<T extends JsonValue>(key?: string): T | Record<string, JsonValue> | undefined {
+  get<T extends ConfigValue>(key: string): T | undefined;
+  get<T extends ConfigValue>(key?: string): T | ConfigValue | undefined {
     if (typeof key !== 'string') {
       return cloneDeep(this.settings);
     }

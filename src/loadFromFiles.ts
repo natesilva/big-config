@@ -5,6 +5,7 @@ import * as JSON5 from 'json5';
 import { cloneDeep } from 'lodash';
 import * as path from 'path';
 import { JsonValue } from 'type-fest';
+import { ConfigValue } from './index';
 
 /**
  * Load configuration settings from a directory containing configuration files.
@@ -14,7 +15,7 @@ import { JsonValue } from 'type-fest';
  *  eval-like behavior is deprecated and potentially unsafe.
  */
 export default function loadFromFiles(dir: string, enableJs = false) {
-  const results: Record<string, JsonValue> = {};
+  const results: ConfigValue = {};
 
   if (!fs.existsSync(dir)) {
     return results;
@@ -26,12 +27,13 @@ export default function loadFromFiles(dir: string, enableJs = false) {
 
   const filenames = fs
     .readdirSync(dir, { withFileTypes: true })
-    .filter(x => x.isFile())
+    .filter((x) => x.isFile())
     .sort((a, b) => a.name.localeCompare(b.name));
 
+  // keep track of which config files we have seen, so we can detect duplicates
   const seen: Record<string, string[]> = {};
 
-  filenames.forEach(dirent => {
+  filenames.forEach((dirent) => {
     const basename = path.basename(dirent.name, path.extname(dirent.name));
     const fullPath = path.resolve(dir, dirent.name);
     const ext = path.extname(fullPath);
@@ -47,23 +49,29 @@ export default function loadFromFiles(dir: string, enableJs = false) {
         case '.json5':
           {
             const input = fs.readFileSync(fullPath, 'utf8');
-            results[basename] = JSON5.parse(input) as Record<string, JsonValue>;
+            results[basename] = JSON5.parse(input) as JsonValue;
           }
           break;
 
         case '.json':
+          {
+            const input = fs.readFileSync(fullPath, 'utf8');
+            results[basename] = JSON.parse(input) as JsonValue;
+          }
+          break;
+
         case '.yml':
         case '.yaml':
           {
             const input = fs.readFileSync(fullPath, 'utf8');
-            results[basename] = yaml.safeLoad(input) as Record<string, JsonValue>;
+            results[basename] = yaml.safeLoad(input) as ConfigValue;
           }
           break;
 
         case '.js':
           if (enableJs) {
-            // eslint-disable-next-line @typescript-eslint/no-var-requires
-            results[basename] = cloneDeep(require(fullPath) as Record<string, JsonValue>);
+            // eslint-disable-next-line
+            results[basename] = cloneDeep(require(fullPath) as ConfigValue);
           }
           break;
       }
