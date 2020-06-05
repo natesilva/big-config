@@ -8,3 +8,4 @@ src
 coverage
 test
 tsconfig.json
+*.sublime-*
