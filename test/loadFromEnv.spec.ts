@@ -10,9 +10,9 @@ describe('loadFromEnv', () => {
 
   it('should load from the environment', () => {
     td.replace(process, 'env');
-    process.env = { CONFIG__key1__key2: 'the value' };
+    process.env = { CONFIG__key1__key2__key3: 'the value' };
     const result = loadFromEnv('CONFIG__');
-    assert.deepStrictEqual(result, { key1: { key2: 'the value' } });
+    assert.deepStrictEqual(result, { key1: { key2: { key3: 'the value' } } });
   });
 
   it('should accept an alternate prefix', () => {
