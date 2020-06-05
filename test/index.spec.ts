@@ -157,5 +157,18 @@ describe('Config class', () => {
         assert.throws(() => config.getBuffer('examples.string'), /not a Buffer/);
       });
     });
+
+    describe('getDate', () => {
+      it('should get the requested value', () => {
+        const config = new Config({ dir: fixtureDir });
+        const result = config.getDate('examples.timestamp');
+        assert.deepStrictEqual(result, new Date('2001-12-15T02:59:43.1Z'));
+      });
+
+      it('should throw if the requested value is not a Date', () => {
+        const config = new Config({ dir: fixtureDir });
+        assert.throws(() => config.getDate('examples.string'), /not a Date/);
+      });
+    });
   });
 });

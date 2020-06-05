@@ -164,7 +164,8 @@ export class Config {
 
   /**
    * Get a setting known to be a Buffer. If it is not defined or not a Buffer, an Error is
-   * thrown.
+   * thrown. Buffer values are only possible when using YAML, for strings defined as
+   * `!!binary`.
    *
    * @returns the requested value, if found and is a Buffer
    * @throws if the requested value was not found or not a Buffer
@@ -173,6 +174,22 @@ export class Config {
     const value = this.getOrFail(key) as unknown;
     if (!Buffer.isBuffer(value)) {
       throw new Error(`[big-config] value for key ${key} is not a Buffer`);
+    }
+    return value;
+  }
+
+  /**
+   * Get a setting known to be a Date. If it is not defined or not a Date, an Error is
+   * thrown. Date values are only possible when using YAML. Within YAML this type is known
+   * as `!!timestamp`.
+   *
+   * @returns the requested value, if found and is a Buffer
+   * @throws if the requested value was not found or not a Buffer
+   */
+  getDate(key: string): Date {
+    const value = this.getOrFail(key) as unknown;
+    if (!(value instanceof Date)) {
+      throw new Error(`[big-config] value for key ${key} is not a Date`);
     }
     return value;
   }
