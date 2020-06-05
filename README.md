@@ -14,6 +14,8 @@ This system works well for small projects, as well as huge multi-developer syste
 npm i big-config
 ```
 
+ℹ️ if you are upgrading from version 2, please see the [release notes](https://github.com/natesilva/big-config/releases/tag/v3.0.0)
+
 ## Example
 
 ### What the config tree looks like
