@@ -75,6 +75,7 @@ You’re free to organize settings how you wish. For a small project, you might 
 For larger projects, it’s recommended to break up settings into groups. For example, `config/default/db.json` would have database settings and `config/default/logging.json` would have logging settings. If you need to override these settings for production you would do so in `config/production/db.json` or `config/production/logging.json`.
 
 ## How to use it
+
 Your settings tree is built synchronously when you call `new Config()`. You should only call `new Config()` once. You can do this in a module and export it so that other modules in the project can access it:
 
 ```typescript
@@ -102,7 +103,7 @@ You can mix and match JSON, [JSON5](https://github.com/json5/json5), and YAML.
 
 It’s even okay to mix and match these file types for different environments. For example, if you have a file called `config/default/db.json5`, it’s okay to override it with `config/production/db.yaml`.
 
-It’s *not* okay to have multiple files with similar names in the *same* environment. For example, if you had `db.json` and `db.yaml`, both in the `/config/staging` directory, you will get a warning. `big-config` does its best to return deterministic results if this happens, but it can lead to some very confusing situations, so it’s not recommended.
+It’s _not_ okay to have multiple files with similar names in the _same_ environment. For example, if you had `db.json` and `db.yaml`, both in the `/config/staging` directory, you will get a warning. `big-config` does its best to return deterministic results if this happens, but it can lead to some very confusing situations, so it’s not recommended.
 
 ### Using a different directory for your config tree
 
@@ -123,7 +124,7 @@ By default, environment variables whose names start with `CONFIG__` (`CONFIG` pl
 For example, if you have the following environment variable:
 
 ```shell
-CONFIG__db_password=hunter2
+CONFIG__db___password=hunter2
 ```
 
 Then its value will be merged into your configuration:
