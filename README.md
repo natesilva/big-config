@@ -124,7 +124,7 @@ By default, environment variables whose names start with `CONFIG__` (`CONFIG` pl
 For example, if you have the following environment variable:
 
 ```shell
-CONFIG__db___password=hunter2
+CONFIG__db__password=hunter2
 ```
 
 Then its value will be merged into your configuration:
