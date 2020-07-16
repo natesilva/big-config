@@ -4,9 +4,11 @@
 
 This provides a simple way to load and manage your project’s configuration files. Settings can be contained in a single file or spread across multiple files—your choice. They can be stored as JSON, [JSON5](https://github.com/json5/json5), YAML, or in environment variables.
 
-Different environments—such as `development` and `production`—can have their own settings. Settings are **merged** with inherited default settings, making it possible to support multiple environments with a minimum of duplication.
-
 This system works well for small projects, as well as huge multi-developer systems that have hundreds of settings spread across dozens of files.
+
+Different environments—such as `development` and `production`—can have their own settings.
+
+A very important feature is that settings are **merged** with inherited default settings. This means you won’t have a “combinatorial explosion of config”[¹](https://12factor.net/config), because each environment only needs to define those values, if any, which are different from the defaults. And they do not need to define *all* of the values for a given config node, only the ones that differ from the default.
 
 ## Install
 
@@ -130,7 +132,8 @@ CONFIG__db__password=hunter2
 Then its value will be merged into your configuration:
 
 ```javascript
-const dbPassword = config.get('db.password');
+const thePassword = config.get('db.password');
+// thePassword is 'hunter2'
 ```
 
 Environment variables are evaluated last, after all of your other (JSON, JSON5, YAML) settings are processed. Therefore they override any other settings.
