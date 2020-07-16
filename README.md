@@ -2,7 +2,7 @@
 
 > Easily manage configuration settings for small to very large projects
 
-This provides a simple way to load and manage your project’s configuration files. Settings can be contained in a single file or spread across multiple files—your choice. They can be stored as JSON, [JSON5](https://github.com/json5/json5), YAML, or in environment variables.
+This provides a simple way to load and manage your project’s configuration files. Settings can be contained in a single file or spread across multiple files—your choice. They can be stored as JSON, [JSON5](https://github.com/json5/json5) (JSON with comments), YAML, or in environment variables.
 
 This system works well for small projects, as well as huge multi-developer systems that have hundreds of settings spread across dozens of files.
 
