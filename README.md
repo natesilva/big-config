@@ -8,7 +8,7 @@ This system works well for small projects, as well as huge multi-developer syste
 
 Different environments—such as `development` and `production`—can have their own settings.
 
-A very important feature is that settings are **merged** with inherited default settings. This means you won’t have a “combinatorial explosion of config”[¹](https://12factor.net/config), because each environment only needs to define those values, if any, which are different from the defaults. And they do not need to define *all* of the values for a given config node, only the ones that differ from the default.
+A very important feature is that settings are **merged** with inherited default settings. This means you won’t have a “combinatorial explosion of config”[¹](https://12factor.net/config), because each environment only needs to define those values, if any, which are different from the defaults. And they do not need to define _all_ of the values for a given config node, only the ones that differ from the default.
 
 ## Install
 
@@ -145,3 +145,11 @@ If you don’t like `CONFIG__` as the environment variable prefix, you can use a
 ```javascript
 const config = new Config({ prefix: 'SETTINGS__' });
 ```
+
+### Disabling local configs with \$BIG_CONFIG_DISABLE_LOCAL
+
+The `local` configuration directory has the highest precident: it will override all other configurations. It does this in order to give users the ability to configure their local environment.
+
+However, this is not always desired. One may wish to have a `local` default stored it git, disabling polling a task queue, as an example. But then when one deploys to production, local will override the production configurations.
+
+In order to work around this, we have the option to disable local configurations. To disable local configurations, set the `BIG_CONFIG_DISABLE_LOCAL=true`.

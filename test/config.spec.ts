@@ -23,7 +23,38 @@ describe('Config class', () => {
       },
     });
   });
-
+  it('should load local directory when process.env.BIG_CONFIG_DISABLE_LOCAL!=="true"', () => {
+    td.replace(process, 'env');
+    process.env.NODE_ENV = 'development';
+    process.env.BIG_CONFIG_DISABLE_LOCAL = 'false';
+    const fixtureDir = path.resolve(__dirname, 'fixtures', 'bigConfigLocalDisabled');
+    const config = new Config({ dir: fixtureDir });
+    assert.strictEqual(config.env, 'development');
+    assert.deepStrictEqual(config.get(), {
+      logging: {
+        logLevel: 'debug',
+        destination: 'debug.log.host',
+        colorize: true,
+        localEnabled: true,
+      },
+    });
+  });
+  it('should NOT load local directory when process.env.BIG_CONFIG_DISABLE_LOCAL==="true"', () => {
+    td.replace(process, 'env');
+    process.env.NODE_ENV = 'development';
+    process.env.BIG_CONFIG_DISABLE_LOCAL = 'true';
+    const fixtureDir = path.resolve(__dirname, 'fixtures', 'bigConfigLocalDisabled');
+    const config = new Config({ dir: fixtureDir });
+    assert.strictEqual(config.env, 'development');
+    assert.deepStrictEqual(config.get(), {
+      logging: {
+        logLevel: 'debug',
+        destination: 'debug.log.host',
+        colorize: false,
+        localEnabled: false,
+      },
+    });
+  });
   it('should include legacy JavaScript when set in options', () => {
     td.replace(process, 'env');
     td.replace(console, 'warn');
