@@ -38,7 +38,7 @@ npm i big-config
 
 In your project’s top-level directory, create a `config` directory. Within that, create a `default` subdirectory, plus one directory for each environment that you will use (such as `production`, `staging`, `development`, `test` and so on).
 
-Finally, you can create a `local` directory with personal settings that will be applied last, to override/extend any other settings. Don’t check the `local` directory into Git.
+Finally, you can create a `local` directory with personal settings that will be applied last, to override/extend any other settings. Don’t check the `local` directory into Git. To enable this functionality, set the environment variable: `BIG_CONFIG_ENABLE_LOCAL=true`
 
 Settings from the `default` directory are read first. Then settings from the environment directory (`production` or `development`) are merged in, followed by settings from the `local` directory.
 
@@ -145,11 +145,3 @@ If you don’t like `CONFIG__` as the environment variable prefix, you can use a
 ```javascript
 const config = new Config({ prefix: 'SETTINGS__' });
 ```
-
-### Disabling local configs with \$BIG_CONFIG_DISABLE_LOCAL
-
-The `local` configuration directory has the highest precident: it will override all other configurations. It does this in order to give users the ability to configure their local environment.
-
-However, this is not always desired. One may wish to have a `local` default stored it git, disabling polling a task queue, as an example. But then when one deploys to production, local will override the production configurations.
-
-In order to work around this, we have the option to disable local configurations. To disable local configurations, set the `BIG_CONFIG_DISABLE_LOCAL=true`.

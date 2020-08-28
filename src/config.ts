@@ -68,7 +68,7 @@ export class Config {
 
     this.settings = loadFromFiles(defaultDir, resolvedOptions.enableJs);
     this.settings = merge(this.settings, loadFromFiles(envDir, resolvedOptions.enableJs));
-    if (process.env.BIG_CONFIG_DISABLE_LOCAL !== 'true') {
+    if (process.env.BIG_CONFIG_ENABLE_LOCAL === 'true') {
       this.settings = merge(
         this.settings,
         loadFromFiles(localDir, resolvedOptions.enableJs)
