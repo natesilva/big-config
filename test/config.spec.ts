@@ -23,6 +23,7 @@ describe('Config class', () => {
       },
     });
   });
+
   it('should load local directory when process.env.BIG_CONFIG_ENABLE_LOCAL==="true"', () => {
     td.replace(process, 'env');
     process.env.NODE_ENV = 'development';
@@ -39,6 +40,7 @@ describe('Config class', () => {
       },
     });
   });
+
   it('should NOT load local directory when process.env.BIG_CONFIG_ENABLE_LOCAL==="false"', () => {
     td.replace(process, 'env');
     process.env.NODE_ENV = 'development';
@@ -55,6 +57,7 @@ describe('Config class', () => {
       },
     });
   });
+
   it('should include legacy JavaScript when set in options', () => {
     td.replace(process, 'env');
     td.replace(console, 'warn');
