@@ -27,7 +27,7 @@ describe('Config class', () => {
     td.replace(process, 'env');
     process.env.NODE_ENV = 'development';
     process.env.BIG_CONFIG_ENABLE_LOCAL = 'true';
-    const fixtureDir = path.resolve(__dirname, 'fixtures', 'bigConfigLocalDisabled');
+    const fixtureDir = path.resolve(__dirname, 'fixtures', 'bigConfigLocalEnabled');
     const config = new Config({ dir: fixtureDir });
     assert.strictEqual(config.env, 'development');
     assert.deepStrictEqual(config.get(), {
@@ -43,7 +43,7 @@ describe('Config class', () => {
     td.replace(process, 'env');
     process.env.NODE_ENV = 'development';
     process.env.BIG_CONFIG_ENABLE_LOCAL = 'false';
-    const fixtureDir = path.resolve(__dirname, 'fixtures', 'bigConfigLocalDisabled');
+    const fixtureDir = path.resolve(__dirname, 'fixtures', 'bigConfigLocalEnabled');
     const config = new Config({ dir: fixtureDir });
     assert.strictEqual(config.env, 'development');
     assert.deepStrictEqual(config.get(), {
