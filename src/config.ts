@@ -10,7 +10,7 @@ import loadFromFiles from './loadFromFiles';
  */
 export interface ConfigArray extends Array<ConfigValue> {} // eslint-disable-line
 export type ConfigObject = { [Key in string]?: ConfigValue };
-export type ConfigValue = 
+export type ConfigValue =
   | string
   | number
   | boolean
@@ -68,10 +68,12 @@ export class Config {
 
     this.settings = loadFromFiles(defaultDir, resolvedOptions.enableJs);
     this.settings = merge(this.settings, loadFromFiles(envDir, resolvedOptions.enableJs));
-    this.settings = merge(
-      this.settings,
-      loadFromFiles(localDir, resolvedOptions.enableJs)
-    );
+    if (process.env.BIG_CONFIG_ENABLE_LOCAL === 'true') {
+      this.settings = merge(
+        this.settings,
+        loadFromFiles(localDir, resolvedOptions.enableJs)
+      );
+    }
 
     this.settings = merge(this.settings, loadFromEnv(resolvedOptions.prefix));
   }

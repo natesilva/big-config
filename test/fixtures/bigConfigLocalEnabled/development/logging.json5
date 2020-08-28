@@ -1,0 +1,5 @@
+{
+  logLevel: 'debug',
+  destination: 'debug.log.host',
+  localEnabled: false,
+}

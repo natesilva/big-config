@@ -8,7 +8,7 @@ This system works well for small projects, as well as huge multi-developer syste
 
 Different environments—such as `development` and `production`—can have their own settings.
 
-A very important feature is that settings are **merged** with inherited default settings. This means you won’t have a “combinatorial explosion of config”[¹](https://12factor.net/config), because each environment only needs to define those values, if any, which are different from the defaults. And they do not need to define *all* of the values for a given config node, only the ones that differ from the default.
+A very important feature is that settings are **merged** with inherited default settings. This means you won’t have a “combinatorial explosion of config”[¹](https://12factor.net/config), because each environment only needs to define those values, if any, which are different from the defaults. And they do not need to define _all_ of the values for a given config node, only the ones that differ from the default.
 
 ## Install
 
@@ -38,7 +38,7 @@ npm i big-config
 
 In your project’s top-level directory, create a `config` directory. Within that, create a `default` subdirectory, plus one directory for each environment that you will use (such as `production`, `staging`, `development`, `test` and so on).
 
-Finally, you can create a `local` directory with personal settings that will be applied last, to override/extend any other settings. Don’t check the `local` directory into Git.
+Finally, you can create a `local` directory with personal settings that will be applied last, to override/extend any other settings. These settings will only be applied if you set the environment variable: `BIG_CONFIG_ENABLE_LOCAL=true`.
 
 Settings from the `default` directory are read first. Then settings from the environment directory (`production` or `development`) are merged in, followed by settings from the `local` directory.
 
