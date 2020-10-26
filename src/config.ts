@@ -38,12 +38,17 @@ export interface Options {
    * values loaded from configuration files. (default: CONFIG__).
    */
   prefix?: string;
+  /**
+   * Whether to load config from the `local` directory. (default: true)
+   */
+  loadLocalConfig?: boolean;
 }
 
 const DEFAULT_OPTIONS: Required<Options> = {
   dir: path.resolve(process.cwd(), 'config'),
   enableJs: false,
   prefix: 'CONFIG__',
+  loadLocalConfig: true
 };
 
 export class Config {
@@ -68,7 +73,7 @@ export class Config {
 
     this.settings = loadFromFiles(defaultDir, resolvedOptions.enableJs);
     this.settings = merge(this.settings, loadFromFiles(envDir, resolvedOptions.enableJs));
-    if (process.env.BIG_CONFIG_ENABLE_LOCAL === 'true') {
+    if (resolvedOptions.loadLocalConfig) {
       this.settings = merge(
         this.settings,
         loadFromFiles(localDir, resolvedOptions.enableJs)

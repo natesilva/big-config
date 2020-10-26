@@ -38,7 +38,7 @@ npm i big-config
 
 In your project’s top-level directory, create a `config` directory. Within that, create a `default` subdirectory, plus one directory for each environment that you will use (such as `production`, `staging`, `development`, `test` and so on).
 
-Finally, you can create a `local` directory with personal settings that will be applied last, to override/extend any other settings. These settings will only be applied if you set the environment variable: `BIG_CONFIG_ENABLE_LOCAL=true`.
+Finally, you can create a `local` directory with personal settings that will be applied last, to override/extend any other settings. Typically the `local` directory is not checked into Git. By default `local` settings will be applied, but if you do not want them to be applied, set the `loadLocalConfig` option to `false`. This can be useful if you want to have pre-defined `local` settings that are checked into Git.
 
 Settings from the `default` directory are read first. Then settings from the environment directory (`production` or `development`) are merged in, followed by settings from the `local` directory.
 
