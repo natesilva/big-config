@@ -32,7 +32,7 @@
     "@typescript-eslint/prefer-regexp-exec": 0,
     // if an arg name ends with `__unused__` ignore it for this rule
     "@typescript-eslint/no-unused-vars": [
-      "error",
+      "warn",
       {
         "argsIgnorePattern": "__unused__$",
         "varsIgnorePattern": "__unused__$"
