@@ -1,6 +1,6 @@
 {
   "name": "big-config",
-  "version": "5.1.0",
+  "version": "5.2.0",
   "description": "Easily manage configuration settings for small to very large projects",
   "repository": "natesilva/big-config",
   "license": "BSD-3-Clause",
