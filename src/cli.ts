@@ -110,6 +110,36 @@ program
     }
   });
 
+program
+  .command('keys [dottedPath]')
+  .description('get the key names of the config item at the given dottedPath')
+  .action((dottedPath?: string) => {
+    const programOpts = program.opts();
+
+    const options: Record<string, unknown> = {
+      dir: programOpts.dir,
+      enableJs: programOpts.enableJs,
+      prefix: programOpts.prefix,
+      loadLocalConfig: programOpts.loadLocalConfig,
+    };
+
+    const config = new Config(options);
+
+    const keys = dottedPath ? config.keys(dottedPath) : config.keys();
+    if (!keys) {
+      console.log('err: config item not found or is not an object with keys');
+      process.exit(1);
+    } else {
+      if (programOpts.yaml) {
+        console.log(yaml.dump(keys));
+      } else if (programOpts.json) {
+        console.log(JSON.stringify(keys, null, 2));
+      } else {
+        console.log(util.inspect(keys, false, null, true));
+      }
+    }
+  });
+
 program.parse(process.argv);
 
 const options: Record<string, unknown> = {};

@@ -118,6 +118,35 @@ describe('Config class', () => {
     });
   });
 
+  describe('keys', () => {
+    it('should get the top-level keys', () => {
+      td.replace(process, 'env');
+      process.env.NODE_ENV = 'development';
+      const fixtureDir = path.resolve(__dirname, 'fixtures', 'basic');
+      const config = new Config({ dir: fixtureDir });
+      const result = config.keys();
+      assert.deepStrictEqual(result, ['logging']);
+    });
+
+    it('should get nested keys', () => {
+      td.replace(process, 'env');
+      process.env.NODE_ENV = 'development';
+      const fixtureDir = path.resolve(__dirname, 'fixtures', 'basic');
+      const config = new Config({ dir: fixtureDir });
+      const result = config.keys('logging');
+      assert.deepStrictEqual(result, ['logLevel', 'colorize', 'destination']);
+    });
+
+    it('should return undefined if the path value is not an object', () => {
+      td.replace(process, 'env');
+      process.env.NODE_ENV = 'development';
+      const fixtureDir = path.resolve(__dirname, 'fixtures', 'basic');
+      const config = new Config({ dir: fixtureDir });
+      const result = config.keys('logging.destination');
+      assert.deepStrictEqual(result, undefined);
+    });
+  });
+
   describe('strongly-typed getters', () => {
     let fixtureDir: string;
 

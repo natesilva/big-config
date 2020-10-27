@@ -1,4 +1,4 @@
-import { cloneDeep, get, merge } from 'lodash';
+import { cloneDeep, get, has, isPlainObject, merge } from 'lodash';
 import * as path from 'path';
 import loadFromEnv from './loadFromEnv';
 import loadFromFiles from './loadFromFiles';
@@ -48,7 +48,7 @@ const DEFAULT_OPTIONS: Required<Options> = {
   dir: path.resolve(process.cwd(), 'config'),
   enableJs: false,
   prefix: 'CONFIG__',
-  loadLocalConfig: true
+  loadLocalConfig: true,
 };
 
 export class Config {
@@ -92,6 +92,22 @@ export class Config {
       return cloneDeep(this.settings);
     }
     return cloneDeep(get(this.settings, key) as T);
+  }
+
+  /** Get the top-level key names for the settings tree. */
+  keys(): string[];
+  /** Get the available key names at the specified config path. */
+  keys(atKey: string): string[] | undefined;
+  keys(atKey?: string): string[] | undefined {
+    const root = atKey
+      ? (get(this.settings, atKey) as ConfigValue | undefined)
+      : this.settings;
+
+    if (!isPlainObject(root)) {
+      return undefined;
+    }
+
+    return Object.keys(root as ConfigObject);
   }
 
   /**
