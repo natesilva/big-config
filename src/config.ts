@@ -1,4 +1,4 @@
-import { cloneDeep, get, has, isPlainObject, merge } from 'lodash';
+import { cloneDeep, get, isPlainObject, merge } from 'lodash';
 import * as path from 'path';
 import loadFromEnv from './loadFromEnv';
 import loadFromFiles from './loadFromFiles';
@@ -195,10 +195,16 @@ export class Config {
    */
   getBuffer(key: string): Buffer {
     const value = this.getOrFail(key) as unknown;
-    if (!Buffer.isBuffer(value)) {
-      throw new Error(`[big-config] value for key ${key} is not a Buffer`);
+
+    if (Buffer.isBuffer(value)) {
+      return value;
     }
-    return value;
+
+    if (value instanceof Uint8Array) {
+      return Buffer.from(value.buffer);
+    }
+
+    throw new Error(`[big-config] value for key ${key} is not a Buffer or Uint8Array`);
   }
 
   /**

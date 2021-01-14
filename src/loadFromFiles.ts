@@ -64,7 +64,7 @@ export default function loadFromFiles(dir: string, enableJs = false) {
         case '.yaml':
           {
             const input = fs.readFileSync(fullPath, 'utf8');
-            results[basename] = yaml.safeLoad(input) as ConfigValue;
+            results[basename] = yaml.load(input) as ConfigValue;
           }
           break;
 
