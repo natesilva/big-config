@@ -62,11 +62,13 @@ program
   .action((dottedPath?: string) => {
     const programOpts = program.opts();
 
+    const loadLocalConfig = !programOpts.skipLocal;
+
     const options: Record<string, unknown> = {
       dir: programOpts.dir,
       enableJs: programOpts.enableJs,
       prefix: programOpts.prefix,
-      loadLocalConfig: programOpts.loadLocalConfig,
+      loadLocalConfig,
     };
 
     const config = new Config(options);
@@ -90,7 +92,7 @@ program
       console.log(`parse JavaScript: ${programOpts.enableJs ? 'yes' : 'no'}`);
       console.log(`environment variable prefix: ${programOpts.prefix as string}`);
       console.log(
-        `load config from config/local: ${programOpts.loadLocalConfig ? 'yes' : 'no'}`
+        `load config from config/local: ${loadLocalConfig ? 'yes' : 'no'}`
       );
 
       console.log('---');
@@ -116,11 +118,13 @@ program
   .action((dottedPath?: string) => {
     const programOpts = program.opts();
 
+    const loadLocalConfig = !programOpts.skipLocal;
+
     const options: Record<string, unknown> = {
       dir: programOpts.dir,
       enableJs: programOpts.enableJs,
       prefix: programOpts.prefix,
-      loadLocalConfig: programOpts.loadLocalConfig,
+      loadLocalConfig,
     };
 
     const config = new Config(options);
@@ -141,21 +145,3 @@ program
   });
 
 program.parse(process.argv);
-
-const options: Record<string, unknown> = {};
-if (typeof program.dir === 'string') {
-  options.dir = program.dir;
-}
-if (typeof program.enableJs === 'boolean') {
-  options.enableJs = program.enableJs;
-}
-if (typeof program.prefix === 'string') {
-  options.prefix = program.prefix;
-}
-if (typeof program.skipLocal === 'boolean') {
-  options.loadLocalConfig = !program.skipLocal;
-}
-
-// console.log(program);
-
-// const config = new Config(options);
