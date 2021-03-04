@@ -1,4 +1,4 @@
-import * as assert from 'assert';
+import { strict as assert } from 'assert';
 import * as fs from 'fs';
 import * as yaml from 'js-yaml';
 import * as JSON5 from 'json5';

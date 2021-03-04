@@ -1,4 +1,4 @@
-import * as assert from 'assert';
+import { strict as assert } from 'assert';
 import { afterEach, describe, it } from 'mocha';
 import * as path from 'path';
 import * as td from 'testdouble';
@@ -13,7 +13,7 @@ describe('loadFromFiles', () => {
     it('should load from a directory with a single JSON file', () => {
       const fixtureDir = path.resolve(__dirname, 'fixtures', 'fileTypes', 'json');
       const config = loadFromFiles(fixtureDir);
-      assert.deepStrictEqual(config, {
+      assert.deepEqual(config, {
         db: {
           fileType: 'json',
           host: 'the db host',
@@ -26,7 +26,7 @@ describe('loadFromFiles', () => {
     it('should load from a directory with a single JSON5 file', () => {
       const fixtureDir = path.resolve(__dirname, 'fixtures', 'fileTypes', 'json5');
       const config = loadFromFiles(fixtureDir);
-      assert.deepStrictEqual(config, {
+      assert.deepEqual(config, {
         db: {
           fileType: 'json5',
           host: 'the db host',
@@ -39,7 +39,7 @@ describe('loadFromFiles', () => {
     it('should load from a directory with a single YAML file with a .yaml extension', () => {
       const fixtureDir = path.resolve(__dirname, 'fixtures', 'fileTypes', 'yaml');
       const config = loadFromFiles(fixtureDir);
-      assert.deepStrictEqual(config, {
+      assert.deepEqual(config, {
         db: {
           fileType: 'yaml',
           host: 'the db host',
@@ -52,7 +52,7 @@ describe('loadFromFiles', () => {
     it('should load from a directory with a single YAML file with a .yml extension', () => {
       const fixtureDir = path.resolve(__dirname, 'fixtures', 'fileTypes', 'yml');
       const config = loadFromFiles(fixtureDir);
-      assert.deepStrictEqual(config, {
+      assert.deepEqual(config, {
         db: {
           fileType: 'yml',
           host: 'the db host',
@@ -67,7 +67,7 @@ describe('loadFromFiles', () => {
     it('should return an empty object if a non-existent directory is specified', () => {
       const fixtureDir = path.resolve(__dirname, 'fixtures', 'does-not-exist');
       const config = loadFromFiles(fixtureDir);
-      assert.deepStrictEqual(config, {});
+      assert.deepEqual(config, {});
     });
 
     it('should throw if a file is specified instead of a directory', () => {
@@ -100,7 +100,7 @@ describe('loadFromFiles', () => {
     it('should load from a directory with a single legacy .js file', () => {
       const fixtureDir = path.resolve(__dirname, 'fixtures', 'fileTypes', 'js');
       const config = loadFromFiles(fixtureDir, true);
-      assert.deepStrictEqual(config, {
+      assert.deepEqual(config, {
         db: {
           fileType: 'js',
           host: 'the db host',
@@ -113,7 +113,7 @@ describe('loadFromFiles', () => {
     it('should ignore .js files if enableJs is false', () => {
       const fixtureDir = path.resolve(__dirname, 'fixtures', 'fileTypes', 'js');
       const config = loadFromFiles(fixtureDir, false); // ← ← ← this is set to false
-      assert.deepStrictEqual(config, {});
+      assert.deepEqual(config, {});
     });
   });
 

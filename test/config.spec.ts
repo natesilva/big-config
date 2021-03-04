@@ -1,4 +1,4 @@
-import * as assert from 'assert';
+import { strict as assert } from 'assert';
 import { afterEach, describe, it } from 'mocha';
 import * as path from 'path';
 import * as td from 'testdouble';
@@ -14,8 +14,8 @@ describe('Config class', () => {
     process.env.NODE_ENV = 'development';
     const fixtureDir = path.resolve(__dirname, 'fixtures', 'basic');
     const config = new Config({ dir: fixtureDir });
-    assert.strictEqual(config.env, 'development');
-    assert.deepStrictEqual(config.get(), {
+    assert.equal(config.env, 'development');
+    assert.deepEqual(config.get(), {
       logging: {
         logLevel: 'debug',
         destination: 'debug.log.host',
@@ -29,8 +29,8 @@ describe('Config class', () => {
     process.env.NODE_ENV = 'development';
     const fixtureDir = path.resolve(__dirname, 'fixtures', 'basic');
     const config = new Config({ dir: fixtureDir, env: 'custom-env' });
-    assert.strictEqual(config.env, 'custom-env');
-    assert.strictEqual(config.getString('example.value'), 'the value in custom-env');
+    assert.equal(config.env, 'custom-env');
+    assert.equal(config.getString('example.value'), 'the value in custom-env');
   });
 
   it('should load local directory when loadLocalConfig is true', () => {
@@ -38,8 +38,8 @@ describe('Config class', () => {
     process.env.NODE_ENV = 'development';
     const fixtureDir = path.resolve(__dirname, 'fixtures', 'bigConfigLocalEnabled');
     const config = new Config({ dir: fixtureDir, loadLocalConfig: true });
-    assert.strictEqual(config.env, 'development');
-    assert.deepStrictEqual(config.get(), {
+    assert.equal(config.env, 'development');
+    assert.deepEqual(config.get(), {
       logging: {
         logLevel: 'debug',
         destination: 'debug.log.host',
@@ -54,8 +54,8 @@ describe('Config class', () => {
     process.env.NODE_ENV = 'development';
     const fixtureDir = path.resolve(__dirname, 'fixtures', 'bigConfigLocalEnabled');
     const config = new Config({ dir: fixtureDir, loadLocalConfig: false });
-    assert.strictEqual(config.env, 'development');
-    assert.deepStrictEqual(config.get(), {
+    assert.equal(config.env, 'development');
+    assert.deepEqual(config.get(), {
       logging: {
         logLevel: 'debug',
         destination: 'debug.log.host',
@@ -71,8 +71,8 @@ describe('Config class', () => {
     process.env.NODE_ENV = 'development';
     const fixtureDir = path.resolve(__dirname, 'fixtures', 'basic');
     const config = new Config({ dir: fixtureDir, enableJs: true });
-    assert.strictEqual(config.env, 'development');
-    assert.deepStrictEqual(config.get(), {
+    assert.equal(config.env, 'development');
+    assert.deepEqual(config.get(), {
       logging: {
         logLevel: 'debug',
         destination: 'debug.log.host',
@@ -96,13 +96,13 @@ describe('Config class', () => {
     process.env.NODE_ENV = 'development';
     const fixtureDir = path.resolve(__dirname, 'fixtures', 'basic');
     const config = new Config({ dir: fixtureDir });
-    assert.strictEqual(config.env, 'development');
-    assert.deepStrictEqual(config.get('logging'), {
+    assert.equal(config.env, 'development');
+    assert.deepEqual(config.get('logging'), {
       logLevel: 'debug',
       destination: 'debug.log.host',
       colorize: true,
     });
-    assert.deepStrictEqual(config.get('logging.logLevel'), 'debug');
+    assert.deepEqual(config.get('logging.logLevel'), 'debug');
   });
 
   describe('getOrFail', () => {
@@ -112,7 +112,7 @@ describe('Config class', () => {
       const fixtureDir = path.resolve(__dirname, 'fixtures', 'basic');
       const config = new Config({ dir: fixtureDir });
       const result = config.getOrFail<string>('logging.destination');
-      assert.strictEqual(result, 'debug.log.host');
+      assert.equal(result, 'debug.log.host');
     });
 
     it('should throw if the requested value is not found', () => {
@@ -134,7 +134,7 @@ describe('Config class', () => {
       const fixtureDir = path.resolve(__dirname, 'fixtures', 'basic');
       const config = new Config({ dir: fixtureDir });
       const result = config.keys();
-      assert.deepStrictEqual(result, ['logging']);
+      assert.deepEqual(result, ['logging']);
     });
 
     it('should get nested keys', () => {
@@ -143,7 +143,7 @@ describe('Config class', () => {
       const fixtureDir = path.resolve(__dirname, 'fixtures', 'basic');
       const config = new Config({ dir: fixtureDir });
       const result = config.keys('logging');
-      assert.deepStrictEqual(result, ['logLevel', 'colorize', 'destination']);
+      assert.deepEqual(result, ['logLevel', 'colorize', 'destination']);
     });
 
     it('should return undefined if the path value is not an object', () => {
@@ -152,7 +152,7 @@ describe('Config class', () => {
       const fixtureDir = path.resolve(__dirname, 'fixtures', 'basic');
       const config = new Config({ dir: fixtureDir });
       const result = config.keys('logging.destination');
-      assert.deepStrictEqual(result, undefined);
+      assert.deepEqual(result, undefined);
     });
   });
 
@@ -167,7 +167,7 @@ describe('Config class', () => {
       it('should get the requested value', () => {
         const config = new Config({ dir: fixtureDir });
         const result = config.getString('examples.string');
-        assert.strictEqual(result, 'This is a string.');
+        assert.equal(result, 'This is a string.');
       });
 
       it('should throw if the requested value is not a string', () => {
@@ -180,7 +180,7 @@ describe('Config class', () => {
       it('should get the requested value', () => {
         const config = new Config({ dir: fixtureDir });
         const result = config.getNumber('examples.number');
-        assert.strictEqual(result, 42);
+        assert.equal(result, 42);
       });
 
       it('should throw if the requested value is not a number', () => {
@@ -193,7 +193,7 @@ describe('Config class', () => {
       it('should get the requested value', () => {
         const config = new Config({ dir: fixtureDir });
         const result = config.getBoolean('examples.boolean');
-        assert.strictEqual(result, false);
+        assert.equal(result, false);
       });
 
       it('should throw if the requested value is not a boolean', () => {
@@ -206,7 +206,7 @@ describe('Config class', () => {
       it('should get the requested value', () => {
         const config = new Config({ dir: fixtureDir });
         const result = config.getArray<string>('examples.array');
-        assert.deepStrictEqual(result, ['Nebraska', 'North Dakota', 'Nunavut']);
+        assert.deepEqual(result, ['Nebraska', 'North Dakota', 'Nunavut']);
       });
 
       it('should throw if the requested value is not an array', () => {
@@ -219,7 +219,7 @@ describe('Config class', () => {
       it('should get the requested value', () => {
         const config = new Config({ dir: fixtureDir });
         const result = config.getBuffer('examples.buffer');
-        assert.deepStrictEqual(result, Buffer.from('hello world'));
+        assert.deepEqual(result, Buffer.from('hello world'));
       });
 
       it('should throw if the requested value is not a Buffer', () => {
@@ -232,7 +232,7 @@ describe('Config class', () => {
       it('should get the requested value', () => {
         const config = new Config({ dir: fixtureDir });
         const result = config.getDate('examples.timestamp');
-        assert.deepStrictEqual(result, new Date('2001-12-15T02:59:43.1Z'));
+        assert.deepEqual(result, new Date('2001-12-15T02:59:43.1Z'));
       });
 
       it('should throw if the requested value is not a Date', () => {
