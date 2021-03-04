@@ -18,8 +18,8 @@ describe('loadFromFiles', () => {
           fileType: 'json',
           host: 'the db host',
           username: 'the db username',
-          port: 3306
-        }
+          port: 3306,
+        },
       });
     });
 
@@ -31,8 +31,8 @@ describe('loadFromFiles', () => {
           fileType: 'json5',
           host: 'the db host',
           username: 'the db username',
-          port: 3306
-        }
+          port: 3306,
+        },
       });
     });
 
@@ -44,8 +44,8 @@ describe('loadFromFiles', () => {
           fileType: 'yaml',
           host: 'the db host',
           username: 'the db username',
-          port: 3306
-        }
+          port: 3306,
+        },
       });
     });
 
@@ -57,8 +57,8 @@ describe('loadFromFiles', () => {
           fileType: 'yml',
           host: 'the db host',
           username: 'the db username',
-          port: 3306
-        }
+          port: 3306,
+        },
       });
     });
   });
@@ -105,8 +105,8 @@ describe('loadFromFiles', () => {
           fileType: 'js',
           host: 'the db host',
           username: 'the db username',
-          port: 3306
-        }
+          port: 3306,
+        },
       });
     });
 

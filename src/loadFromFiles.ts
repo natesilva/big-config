@@ -49,7 +49,7 @@ export default function loadFromFiles(dir: string, enableJs = false) {
         case '.json5':
           {
             const input = fs.readFileSync(fullPath, 'utf8');
-            results[basename] = JSON5.parse(input) as JsonValue;
+            results[basename] = JSON5.parse(input);
           }
           break;
 
