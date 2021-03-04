@@ -66,6 +66,13 @@ export class Config {
   constructor(options?: Options) {
     const resolvedOptions = { ...DEFAULT_OPTIONS, ...omitBy(options, isUndefined) };
 
+    if (
+      resolvedOptions.env === 'default' ||
+      (resolvedOptions.env === 'local' && resolvedOptions.loadLocalConfig)
+    ) {
+      throw new Error(`[big-config] ${resolvedOptions.env} is not a valid env name`);
+    }
+
     this.env = resolvedOptions.env;
 
     const defaultDir = path.resolve(resolvedOptions.dir, 'default');

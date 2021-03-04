@@ -15,7 +15,9 @@ describe('Config class', () => {
     const fixtureDir = path.resolve(__dirname, 'fixtures', 'basic');
     const config = new Config({ dir: fixtureDir });
     assert.equal(config.env, 'development');
+    assert.equal(config.getString('environment'), 'development');
     assert.deepEqual(config.get(), {
+      environment: 'development',
       logging: {
         logLevel: 'debug',
         destination: 'debug.log.host',
@@ -30,7 +32,19 @@ describe('Config class', () => {
     const fixtureDir = path.resolve(__dirname, 'fixtures', 'basic');
     const config = new Config({ dir: fixtureDir, env: 'custom-env' });
     assert.equal(config.env, 'custom-env');
-    assert.equal(config.getString('example.value'), 'the value in custom-env');
+    assert.equal(config.getString('environment'), 'custom-env');
+  });
+
+  it("should throw if the env name is 'default'", () => {
+    assert.throws(() => new Config({ env: 'default' }), /not a valid env name/);
+  });
+
+  it("should throw if the env name is 'local' and local config is enabled", () => {
+    assert.throws(() => new Config({ env: 'local' }), /not a valid env name/);
+  });
+
+  it("should not throw if the env name is 'local' and local config is disabled", () => {
+    assert.doesNotThrow(() => new Config({ env: 'local', loadLocalConfig: false }));
   });
 
   it('should load local directory when loadLocalConfig is true', () => {
@@ -73,6 +87,7 @@ describe('Config class', () => {
     const config = new Config({ dir: fixtureDir, enableJs: true });
     assert.equal(config.env, 'development');
     assert.deepEqual(config.get(), {
+      environment: 'development',
       logging: {
         logLevel: 'debug',
         destination: 'debug.log.host',
@@ -134,7 +149,7 @@ describe('Config class', () => {
       const fixtureDir = path.resolve(__dirname, 'fixtures', 'basic');
       const config = new Config({ dir: fixtureDir });
       const result = config.keys();
-      assert.deepEqual(result, ['logging']);
+      assert.deepEqual(result, ['logging', 'environment']);
     });
 
     it('should get nested keys', () => {
