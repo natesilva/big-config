@@ -24,6 +24,15 @@ describe('Config class', () => {
     });
   });
 
+  it('should allow directly specifying the env', () => {
+    td.replace(process, 'env');
+    process.env.NODE_ENV = 'development';
+    const fixtureDir = path.resolve(__dirname, 'fixtures', 'basic');
+    const config = new Config({ dir: fixtureDir, env: 'custom-env' });
+    assert.strictEqual(config.env, 'custom-env');
+    assert.strictEqual(config.getString('example.value'), 'the value in custom-env');
+  });
+
   it('should load local directory when loadLocalConfig is true', () => {
     td.replace(process, 'env');
     process.env.NODE_ENV = 'development';

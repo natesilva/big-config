@@ -23,6 +23,11 @@ const MISSING_VALUE = Symbol('MISSING_VALUE');
 
 export interface Options {
   /**
+   * The environment to use. (default: the value of the NODE_ENV environment variable, or
+   * 'development' if it is not set)
+   */
+  env?: string;
+  /**
    * The base directory from which to recursively load configurations (default: a
    * directory named `config`, located in the working directory, typically the top level
    * of your project)
@@ -45,6 +50,7 @@ export interface Options {
 }
 
 const DEFAULT_OPTIONS: Required<Options> = {
+  env: process.env.NODE_ENV || 'development',
   dir: path.resolve(process.cwd(), 'config'),
   enableJs: false,
   prefix: 'CONFIG__',
@@ -53,12 +59,14 @@ const DEFAULT_OPTIONS: Required<Options> = {
 
 export class Config {
   /** the currently-active environment */
-  public readonly env = process.env.NODE_ENV || 'development';
+  public readonly env: string;
   private readonly settings: ConfigValue;
 
   /** Initialize the config system. Synchronously builds the entire config tree. */
   constructor(options?: Options) {
     const resolvedOptions = { ...DEFAULT_OPTIONS, ...options };
+
+    this.env = resolvedOptions.env;
 
     const defaultDir = path.resolve(resolvedOptions.dir, 'default');
     const envDir = path.resolve(resolvedOptions.dir, this.env);
