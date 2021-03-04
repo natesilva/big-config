@@ -6,7 +6,7 @@ import * as yaml from 'js-yaml';
 import * as path from 'path';
 import * as pkgDir from 'pkg-dir';
 import * as util from 'util';
-import { Config, ConfigValue } from '.';
+import { Config, ConfigValue, Options } from '.';
 
 program.name('big-config').version('0.0.1');
 
@@ -45,12 +45,9 @@ program
   .description('get the environment that will be used by the config system')
   .action(() => {
     const programOpts = program.opts();
-    if (programOpts.env) {
-      console.log(programOpts.env);
-    } else {
-      const config = new Config();
-      console.log(config.env);
-    }
+    const loadLocalConfig = !programOpts.skipLocal;
+    const config = new Config({ env: programOpts.env, loadLocalConfig });
+    console.log(config.env);
   });
 
 program
@@ -64,7 +61,8 @@ program
 
     const loadLocalConfig = !programOpts.skipLocal;
 
-    const options: Record<string, unknown> = {
+    const options: Options = {
+      env: programOpts.env,
       dir: programOpts.dir,
       enableJs: programOpts.enableJs,
       prefix: programOpts.prefix,
@@ -91,9 +89,7 @@ program
       console.log(`key path: ${dottedPath || '(entire config tree)'}`);
       console.log(`parse JavaScript: ${programOpts.enableJs ? 'yes' : 'no'}`);
       console.log(`environment variable prefix: ${programOpts.prefix as string}`);
-      console.log(
-        `load config from config/local: ${loadLocalConfig ? 'yes' : 'no'}`
-      );
+      console.log(`load config from config/local: ${loadLocalConfig ? 'yes' : 'no'}`);
 
       console.log('---');
     }
@@ -121,6 +117,7 @@ program
     const loadLocalConfig = !programOpts.skipLocal;
 
     const options: Record<string, unknown> = {
+      env: programOpts.env,
       dir: programOpts.dir,
       enableJs: programOpts.enableJs,
       prefix: programOpts.prefix,
