@@ -1,4 +1,4 @@
-import { cloneDeep, get, isPlainObject, merge } from 'lodash';
+import { cloneDeep, get, isPlainObject, isUndefined, merge, omitBy } from 'lodash';
 import * as path from 'path';
 import loadFromEnv from './loadFromEnv';
 import loadFromFiles from './loadFromFiles';
@@ -64,7 +64,7 @@ export class Config {
 
   /** Initialize the config system. Synchronously builds the entire config tree. */
   constructor(options?: Options) {
-    const resolvedOptions = { ...DEFAULT_OPTIONS, ...options };
+    const resolvedOptions = { ...DEFAULT_OPTIONS, ...omitBy(options, isUndefined) };
 
     this.env = resolvedOptions.env;
 
