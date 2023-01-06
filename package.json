@@ -28,36 +28,36 @@
     "postpublish": "del-cli build"
   },
   "engines": {
-    "node": ">=10.10.0"
+    "node": ">=14"
   },
   "devDependencies": {
-    "@types/js-yaml": "^4.0.0",
-    "@types/lodash": "^4.14.168",
-    "@types/mocha": "^8.2.1",
-    "@types/node": "^10.17.54",
-    "@typescript-eslint/eslint-plugin": "^4.16.1",
-    "@typescript-eslint/parser": "^4.16.1",
-    "del-cli": "^3.0.1",
-    "eslint": "^7.21.0",
-    "eslint-config-prettier": "^8.1.0",
-    "mocha": "^8.3.0",
-    "np": "^7.4.0",
+    "@types/js-yaml": "^4.0.5",
+    "@types/lodash": "^4.14.191",
+    "@types/mocha": "^10.0.1",
+    "@types/node": "^14.18.36",
+    "@typescript-eslint/eslint-plugin": "^5.48.0",
+    "@typescript-eslint/parser": "^5.48.0",
+    "del-cli": "^5.0.0",
+    "eslint": "^8.31.0",
+    "eslint-config-prettier": "^8.6.0",
+    "mocha": "^10.2.0",
+    "np": "^7.6.3",
     "nyc": "^15.1.0",
-    "prettier": "^2.2.1",
-    "prettier-plugin-organize-imports": "^1.1.1",
-    "testdouble": "^3.16.1",
-    "ts-node": "^9.1.1",
-    "typescript": "^4.2.2"
+    "prettier": "^2.8.1",
+    "prettier-plugin-organize-imports": "^3.2.1",
+    "testdouble": "^3.16.8",
+    "ts-node": "^10.9.1",
+    "typescript": "^4.9.4"
   },
   "dependencies": {
-    "commander": "^7.1.0",
-    "js-yaml": "^4.0.0",
-    "json5": "^2.2.0",
+    "commander": "^9.4.1",
+    "js-yaml": "^4.1.0",
+    "json5": "^2.2.3",
     "lodash": "^4.17.21",
     "pkg-dir": "^5.0.0",
-    "type-fest": "^0.21.2"
+    "type-fest": "^3.5.1"
   },
   "volta": {
-    "node": "10.24.0"
+    "node": "14.21.2"
   }
 }
