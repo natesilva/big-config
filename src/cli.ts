@@ -1,44 +1,42 @@
 #!/usr/bin/env node
 
-import { program } from 'commander';
-import * as fs from 'fs';
-import * as yaml from 'js-yaml';
-import * as path from 'path';
-import * as pkgDir from 'pkg-dir';
-import * as util from 'util';
-import { Config, ConfigValue, Options } from '.';
+import { Command } from '@commander-js/extra-typings';
+import yaml from 'js-yaml';
+import fs from 'node:fs';
+import path from 'node:path';
+import util from 'node:util';
+import { packageDirectorySync } from 'pkg-dir';
+import { Config, ConfigValue, Options } from './index.js';
 
-program.name('big-config').version('0.0.1');
+const program = new Command()
+  .name('big-config')
+  .version('0.0.1')
 
-program.option(
-  '-d, --dir <path>',
-  'the base directory from which to recursively load configurations',
-  path.relative('.', path.join(pkgDir.sync() || '.', 'config'))
-);
+  .option(
+    '-d, --dir <path>',
+    'the base directory from which to recursively load configurations',
+    path.relative('.', path.join(packageDirectorySync() || '.', 'config'))
+  )
+  .option('-js, --enable-js', 'enable loading from JavaScript files', false)
 
-program.option('-js, --enable-js', 'enable loading from JavaScript files', false);
+  .option(
+    '-p, --prefix <prefix>',
+    'the prefix for environment variable names that will be merged with and override any ' +
+      'values loaded from configuration file',
+    'CONFIG__'
+  )
 
-program.option(
-  '-p, --prefix <prefix>',
-  'the prefix for environment variable names that will be merged with and override any ' +
-    'values loaded from configuration file',
-  'CONFIG__'
-);
+  .option('--skip-local', 'skip loading values from the config/local directory', false)
 
-program.option(
-  '--skip-local',
-  'skip loading values from the config/local directory',
-  false
-);
+  .option(
+    '-e, --env <environment>',
+    'the environment to use when loading configuration settings (development, staging, ' +
+      'production)'
+  )
 
-program.option(
-  '-e, --env <environment>',
-  'the environment to use when loading configuration settings (development, staging, ' +
-    'production)'
-);
+  .option('-y, --yaml', 'output YAML', false)
 
-program.option('-y, --yaml', 'output YAML', false);
-program.option('-j, --json', 'output JSON', false);
+  .option('-j, --json', 'output JSON', false);
 
 program
   .command('env')
@@ -64,7 +62,6 @@ program
     const options: Options = {
       env: programOpts.env,
       dir: programOpts.dir,
-      enableJs: programOpts.enableJs,
       prefix: programOpts.prefix,
       loadLocalConfig,
     };
@@ -87,8 +84,7 @@ program
       );
       console.log(`environment: ${config.env}`);
       console.log(`key path: ${dottedPath || '(entire config tree)'}`);
-      console.log(`parse JavaScript: ${programOpts.enableJs ? 'yes' : 'no'}`);
-      console.log(`environment variable prefix: ${programOpts.prefix as string}`);
+      console.log(`environment variable prefix: ${programOpts.prefix}`);
       console.log(`load config from config/local: ${loadLocalConfig ? 'yes' : 'no'}`);
 
       console.log('---');
@@ -119,7 +115,6 @@ program
     const options: Record<string, unknown> = {
       env: programOpts.env,
       dir: programOpts.dir,
-      enableJs: programOpts.enableJs,
       prefix: programOpts.prefix,
       loadLocalConfig,
     };

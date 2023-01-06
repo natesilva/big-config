@@ -1,20 +1,17 @@
-import { strict as assert } from 'assert';
-import * as fs from 'fs';
-import * as yaml from 'js-yaml';
-import * as JSON5 from 'json5';
-import { cloneDeep } from 'lodash';
-import * as path from 'path';
+import yaml from 'js-yaml';
+import JSON5 from 'json5';
+import { strict as assert } from 'node:assert';
+import fs from 'node:fs';
+import path from 'node:path';
 import { JsonValue } from 'type-fest';
-import { ConfigValue } from './index';
+import { ConfigValue } from './index.js';
 
 /**
  * Load configuration settings from a directory containing configuration files.
  *
  * @param dir the directory from which to recursively load configurations
- * @param enableJs if true, enable loading from JavaScript files by using require(). This
- *  eval-like behavior is deprecated and potentially unsafe.
  */
-export default function loadFromFiles(dir: string, enableJs = false) {
+export default function loadFromFiles(dir: string) {
   const results: ConfigValue = {};
 
   if (!fs.existsSync(dir)) {
@@ -65,13 +62,6 @@ export default function loadFromFiles(dir: string, enableJs = false) {
           {
             const input = fs.readFileSync(fullPath, 'utf8');
             results[basename] = yaml.load(input) as ConfigValue;
-          }
-          break;
-
-        case '.js':
-          if (enableJs) {
-            // eslint-disable-next-line
-            results[basename] = cloneDeep(require(fullPath) as ConfigValue);
           }
           break;
       }

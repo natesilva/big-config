@@ -1,12 +1,11 @@
-import { cloneDeep, get, isPlainObject, isUndefined, merge, omitBy } from 'lodash';
-import * as path from 'path';
-import loadFromEnv from './loadFromEnv';
-import loadFromFiles from './loadFromFiles';
+import { cloneDeep, get, isPlainObject, isUndefined, merge, omitBy } from 'lodash-es';
+import path from 'node:path';
+import loadFromEnv from './loadFromEnv.js';
+import loadFromFiles from './loadFromFiles.js';
 
 /**
  * The possible types that can be stored in a configuration. We support anything YAML
  * does. YAML is mostly JSON, plus Buffer, which is returned for !!binary strings.
- *
  */
 export interface ConfigArray extends Array<ConfigValue> {} // eslint-disable-line
 export type ConfigObject = { [Key in string]?: ConfigValue };
@@ -34,11 +33,6 @@ export interface Options {
    */
   dir?: string;
   /**
-   * If true, enable loading from JavaScript files by using require(). This eval-like
-   * behavior is deprecated and potentially unsafe. (default: false)
-   */
-  enableJs?: boolean;
-  /**
    * The prefix for environment variable names that will be merged with and override any
    * values loaded from configuration files. (default: CONFIG__).
    */
@@ -52,7 +46,6 @@ export interface Options {
 const DEFAULT_OPTIONS: Required<Options> = {
   env: process.env.NODE_ENV || 'development',
   dir: path.resolve(process.cwd(), 'config'),
-  enableJs: false,
   prefix: 'CONFIG__',
   loadLocalConfig: true,
 };
@@ -79,20 +72,10 @@ export class Config {
     const envDir = path.resolve(resolvedOptions.dir, this.env);
     const localDir = path.resolve(resolvedOptions.dir, 'local');
 
-    if (resolvedOptions.enableJs) {
-      console.warn(
-        '[big-config] enabling potentially unsafe parsing of .js files because the ' +
-          'enableJs option is true'
-      );
-    }
-
-    this.settings = loadFromFiles(defaultDir, resolvedOptions.enableJs);
-    this.settings = merge(this.settings, loadFromFiles(envDir, resolvedOptions.enableJs));
+    this.settings = loadFromFiles(defaultDir);
+    this.settings = merge(this.settings, loadFromFiles(envDir));
     if (resolvedOptions.loadLocalConfig) {
-      this.settings = merge(
-        this.settings,
-        loadFromFiles(localDir, resolvedOptions.enableJs)
-      );
+      this.settings = merge(this.settings, loadFromFiles(localDir));
     }
 
     this.settings = merge(this.settings, loadFromEnv(resolvedOptions.prefix));

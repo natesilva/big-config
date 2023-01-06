@@ -1,5 +1,6 @@
 {
-  "include": ["src/**/*.ts", "test/**/*.ts"],
+  "include": ["**/src", "**/test"],
+  "exclude": ["**/node_modules", "**/build"],
   "compilerOptions": {
     "rootDir": ".",
     "forceConsistentCasingInFileNames": true,
@@ -8,10 +9,10 @@
     "strictNullChecks": true,
     "sourceMap": true,
     "declaration": true,
-    "target": "es2017",
+    "target": "ES2021",
     "outDir": "build",
-    "moduleResolution": "node",
-    "lib": ["es2017"],
-    "module": "commonjs"
+    "module": "node16",
+    "moduleResolution": "node16",
+    "lib": ["ES2021"]
   }
 }

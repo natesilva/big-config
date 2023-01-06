@@ -1,8 +1,11 @@
-import { strict as assert } from 'assert';
 import { afterEach, describe, it } from 'mocha';
-import * as path from 'path';
+import { strict as assert } from 'node:assert';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import * as td from 'testdouble';
-import { Config } from '../src/config';
+import { Config } from '../src/config.js';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 describe('Config class', () => {
   afterEach(() => {
@@ -77,33 +80,6 @@ describe('Config class', () => {
         localEnabled: false,
       },
     });
-  });
-
-  it('should include legacy JavaScript when set in options', () => {
-    td.replace(process, 'env');
-    td.replace(console, 'warn');
-    process.env.NODE_ENV = 'development';
-    const fixtureDir = path.resolve(__dirname, 'fixtures', 'basic');
-    const config = new Config({ dir: fixtureDir, enableJs: true });
-    assert.equal(config.env, 'development');
-    assert.deepEqual(config.get(), {
-      environment: 'development',
-      logging: {
-        logLevel: 'debug',
-        destination: 'debug.log.host',
-        colorize: true,
-      },
-      legacy: {
-        legacyJavaScript: 'hello',
-      },
-    });
-  });
-
-  it('should warn about unsafe legacy JavaScript parsing', () => {
-    td.replace(console, 'warn');
-    const fixtureDir = path.resolve(__dirname, 'fixtures', 'basic');
-    new Config({ dir: fixtureDir, enableJs: true });
-    td.verify(console.warn(td.matchers.contains('enabling potentially unsafe parsing')));
   });
 
   it('should allow access to nested settings using dot notation', () => {

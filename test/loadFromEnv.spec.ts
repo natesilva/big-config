@@ -1,7 +1,7 @@
-import { strict as assert } from 'assert';
 import { afterEach, describe, it } from 'mocha';
+import { strict as assert } from 'node:assert';
 import * as td from 'testdouble';
-import loadFromEnv from '../src/loadFromEnv';
+import loadFromEnv from '../src/loadFromEnv.js';
 
 describe('loadFromEnv', () => {
   afterEach(() => {

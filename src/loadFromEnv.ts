@@ -1,4 +1,4 @@
-import { set } from 'lodash';
+import { set } from 'lodash-es';
 
 export default function loadFromEnv(prefix: string) {
   const settings: Record<string, string> = {};

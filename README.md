@@ -80,16 +80,16 @@ For larger projects, it’s recommended to break up settings into groups. For ex
 
 Your settings tree is built synchronously when you call `new Config()`. You should only call `new Config()` once. You can do this in a module and export it so that other modules in the project can access it:
 
-```typescript
+```javascript
 // this is initConfig.js:
-const { Config } = require('big-config');
+import { Config } from 'big-config';
 exports.config = new Config();
 ```
 
-In your other files, import from `./initConfig`:
+In your other files, import from `./initConfig.js`:
 
 ```javascript
-const { config } = require('./initConfig');
+import { config } from './initConfig.js';
 
 // now you can use it:
 console.log(config.get('greetings.Japanese')); // こんにちは世界 perhaps

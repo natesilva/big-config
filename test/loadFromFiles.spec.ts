@@ -1,8 +1,11 @@
-import { strict as assert } from 'assert';
 import { afterEach, describe, it } from 'mocha';
-import * as path from 'path';
+import { strict as assert } from 'node:assert';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import * as td from 'testdouble';
-import loadFromFiles from '../src/loadFromFiles';
+import loadFromFiles from '../src/loadFromFiles.js';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 describe('loadFromFiles', () => {
   afterEach(() => {
@@ -97,22 +100,9 @@ describe('loadFromFiles', () => {
   });
 
   describe('legacy JavaScript support', () => {
-    it('should load from a directory with a single legacy .js file', () => {
+    it('should ignore .js files', () => {
       const fixtureDir = path.resolve(__dirname, 'fixtures', 'fileTypes', 'js');
-      const config = loadFromFiles(fixtureDir, true);
-      assert.deepEqual(config, {
-        db: {
-          fileType: 'js',
-          host: 'the db host',
-          username: 'the db username',
-          port: 3306,
-        },
-      });
-    });
-
-    it('should ignore .js files if enableJs is false', () => {
-      const fixtureDir = path.resolve(__dirname, 'fixtures', 'fileTypes', 'js');
-      const config = loadFromFiles(fixtureDir, false); // ← ← ← this is set to false
+      const config = loadFromFiles(fixtureDir);
       assert.deepEqual(config, {});
     });
   });
@@ -139,14 +129,6 @@ describe('loadFromFiles', () => {
       assert.throws(
         () => loadFromFiles(fixtureDir),
         (err: Error) => /fixtures\/bad\/json5\/db\.json5/.test(err.message)
-      );
-    });
-
-    it('should include the offending filename in the error message for JavaScript parsing errors', () => {
-      const fixtureDir = path.resolve(__dirname, 'fixtures', 'bad', 'js');
-      assert.throws(
-        () => loadFromFiles(fixtureDir, true),
-        (err: Error) => /fixtures\/bad\/js\/db\.js/.test(err.message)
       );
     });
   });
