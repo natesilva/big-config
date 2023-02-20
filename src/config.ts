@@ -47,6 +47,11 @@ export interface Options {
    * Whether to load config from the `local` directory. (default: true)
    */
   loadLocalConfig?: boolean;
+  /**
+   * JSON configuration to use as the base configuration. This will be merged with
+   * configuration loaded from files and environment variables.
+   */
+  json?: ConfigValue;
 }
 
 const DEFAULT_OPTIONS: Required<Options> = {
@@ -55,6 +60,7 @@ const DEFAULT_OPTIONS: Required<Options> = {
   enableJs: false,
   prefix: 'CONFIG__',
   loadLocalConfig: true,
+  json: {},
 };
 
 export class Config {
@@ -74,6 +80,9 @@ export class Config {
     }
 
     this.env = resolvedOptions.env;
+    this.settings = {};
+
+    this.settings = merge(this.settings, resolvedOptions.json);
 
     const defaultDir = path.resolve(resolvedOptions.dir, 'default');
     const envDir = path.resolve(resolvedOptions.dir, this.env);
@@ -86,8 +95,12 @@ export class Config {
       );
     }
 
-    this.settings = loadFromFiles(defaultDir, resolvedOptions.enableJs);
-    this.settings = merge(this.settings, loadFromFiles(envDir, resolvedOptions.enableJs));
+    this.settings = merge(
+      this.settings,
+      loadFromFiles(defaultDir, resolvedOptions.enableJs)
+    );
+    const lff = loadFromFiles(envDir, resolvedOptions.enableJs);
+    this.settings = merge(this.settings, lff);
     if (resolvedOptions.loadLocalConfig) {
       this.settings = merge(
         this.settings,

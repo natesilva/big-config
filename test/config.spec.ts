@@ -2,7 +2,7 @@ import { strict as assert } from 'assert';
 import { afterEach, describe, it } from 'mocha';
 import * as path from 'path';
 import * as td from 'testdouble';
-import { Config } from '../src/config';
+import { Config, ConfigValue } from '../src/config';
 
 describe('Config class', () => {
   afterEach(() => {
@@ -25,6 +25,60 @@ describe('Config class', () => {
       },
     });
   });
+
+  it('should load from passed-in JSON', () => {
+    const mockConfig: ConfigValue = {
+      key1: {
+        key2: {
+          key3: 'the value',
+        },
+      },
+      settingA: 'the value',
+      settingB: {
+        settingC: 'the value',
+      },
+    };
+
+    td.replace(process, 'env');
+    process.env.NODE_ENV = 'development';
+    const config = new Config({ json: mockConfig });
+    assert.equal(config.env, 'development');
+    assert.deepEqual(config.get(), {
+      ...mockConfig,
+    });
+  });
+
+  it('should load defaults from passed-in JSON, and override with settings from files', () => {
+    const mockConfig: ConfigValue = {
+      key1: {
+        key2: {
+          key3: 'the value',
+        },
+      },
+      settingA: 'the value',
+      settingB: {
+        settingC: 'the value',
+      },
+      environment: 'the environment'
+    };
+
+    td.replace(process, 'env');
+    process.env.NODE_ENV = 'development';
+    const fixtureDir = path.resolve(__dirname, 'fixtures', 'basic');
+    const config = new Config({ dir: fixtureDir, json: mockConfig });
+    assert.equal(config.env, 'development');
+    assert.equal(config.getString('environment'), 'development');
+    assert.deepEqual(config.get(), {
+      ...mockConfig,
+      environment: 'development',
+      logging: {
+        logLevel: 'debug',
+        destination: 'debug.log.host',
+        colorize: true,
+      },
+    });
+  });
+
 
   it('should allow directly specifying the env', () => {
     td.replace(process, 'env');
