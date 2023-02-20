@@ -1,5 +1,10 @@
 import { set } from 'lodash';
 
+/**
+ * Load configuration settings from environment variables.
+ *
+ * @param prefix the prefix to use when looking up environment variables
+ */
 export default function loadFromEnv(prefix: string) {
   const settings: Record<string, string> = {};
 
