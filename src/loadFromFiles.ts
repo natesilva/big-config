@@ -4,7 +4,6 @@ import * as yaml from 'js-yaml';
 import * as JSON5 from 'json5';
 import { cloneDeep } from 'lodash';
 import * as path from 'path';
-import { JsonValue } from 'type-fest';
 import { ConfigValue } from './index';
 
 /**
@@ -56,7 +55,7 @@ export default function loadFromFiles(dir: string, enableJs = false) {
         case '.json':
           {
             const input = fs.readFileSync(fullPath, 'utf8');
-            results[basename] = JSON.parse(input) as JsonValue;
+            results[basename] = JSON.parse(input) as ConfigValue;
           }
           break;
 
