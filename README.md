@@ -42,7 +42,7 @@ You can also create a `local` directory with personal settings that will be appl
 
 Settings from the `default` directory are read first. Then settings from the environment directory (`production` or `development`) are merged in, followed by settings from the `local` directory.
 
-The selected environment is specified using the `NODE_ENV` environment variable. If `NODE_ENV` is set to `development`, you will end up with the following database settings:
+**NODE_ENV**: The selected environment is specified using the `NODE_ENV` environment variable. If `NODE_ENV` is set to `development`, then for the above example, you will end up with the following database settings:
 
 ```yaml
 {
@@ -68,6 +68,25 @@ const db = config.get('database');
 const port = config.get('database.port');
 // 3306
 ```
+
+The library is TypeScript-friendly, offering strongly-typed methods for retrieving settings:
+
+- `getNumber`: Returns a number
+- `getString`: Returns a string
+- `getBoolean`: Returns a boolean
+- `getArray`: Returns an array
+
+These methods throw an `Error` if the setting isn't of the expected type:
+
+```typescript
+const port = config.getNumber('database.port');
+// Returns the 'port' setting as a number, throws if not a number
+```
+
+For YAML configs, which support additional data types, two extra methods are available:
+
+- `getBuffer`: Returns a `Buffer`, useful for binary data
+- `getDate`: Returns a `Date` object
 
 ### Organizing settings
 
