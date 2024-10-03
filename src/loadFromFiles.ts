@@ -46,6 +46,7 @@ export default function loadFromFiles(dir: string, enableJs = false) {
     try {
       switch (ext) {
         case '.json5':
+        case '.jsonc':
           {
             const input = fs.readFileSync(fullPath, 'utf8');
             results[basename] = JSON5.parse(input);
