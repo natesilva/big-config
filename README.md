@@ -8,7 +8,7 @@ This system works well for small projects, as well as huge multi-developer syste
 
 Different environments—such as `development` and `production`—can have their own settings.
 
-A key feature is that settings are **merged** with inherited default settings. This prevents a "combinatorial explosion of config"[¹](https://12factor.net/config), because each environment only needs to define values that differ from the defaults. There’s no need to specify _all_ values for a given config node, just those that deviate from the default configuration.
+A key feature is that settings are **merged** with inherited default settings. This prevents a “combinatorial explosion of config”[¹](https://12factor.net/config), because each environment only needs to define values that differ from the defaults. There’s no need to specify _all_ values for a given config node, just those that deviate from the default configuration.
 
 ## Install
 
