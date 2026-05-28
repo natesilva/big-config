@@ -1,12 +1,19 @@
-import { strict as assert } from 'assert';
-import { afterEach, describe, it } from 'mocha';
-import * as td from 'testdouble';
-import { ConfigValue } from '../src';
+import { afterEach, beforeEach, describe, it, mock } from 'bun:test';
+import { strict as assert } from 'node:assert';
+import type { ConfigValue } from '../src';
 import loadFromJson from '../src/loadFromJson';
 
-describe('loadFromEnv', () => {
+describe('loadFromJson', () => {
+  let originalEnv: string | undefined;
+
+  beforeEach(() => {
+    originalEnv = process.env.NODE_ENV;
+  });
+
   afterEach(() => {
-    td.reset();
+    mock.restore();
+    mock.clearAllMocks();
+    process.env.NODE_ENV = originalEnv;
   });
 
   it('should load from a given JSON object', () => {

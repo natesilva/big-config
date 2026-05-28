@@ -1,8 +1,6 @@
 src
 .editorconfig
 .eslint*
-.mocharc.json
-.nyc_output
 .prettierrc.json
 .vscode
 coverage

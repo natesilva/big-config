@@ -8,10 +8,12 @@
     "strictNullChecks": true,
     "sourceMap": true,
     "declaration": true,
-    "target": "es2017",
+    "target": "ESNext",
     "outDir": "build",
-    "moduleResolution": "node",
-    "lib": ["es2017"],
-    "module": "commonjs"
+    "moduleResolution": "nodenext",
+    "lib": ["ESNext"],
+    "module": "nodenext",
+    "types": ["node", "bun"],
+    "skipLibCheck": true
   }
 }

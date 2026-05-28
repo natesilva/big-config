@@ -1,12 +1,19 @@
-import { strict as assert } from 'assert';
-import { afterEach, describe, it } from 'mocha';
-import * as path from 'path';
-import * as td from 'testdouble';
+import { afterEach, beforeEach, describe, expect, it, mock, spyOn } from 'bun:test';
+import { strict as assert } from 'node:assert';
+import * as path from 'node:path';
 import loadFromFiles from '../src/loadFromFiles';
 
 describe('loadFromFiles', () => {
+  let originalEnv: string | undefined;
+
+  beforeEach(() => {
+    originalEnv = process.env.NODE_ENV;
+  });
+
   afterEach(() => {
-    td.reset();
+    mock.restore();
+    mock.clearAllMocks();
+    process.env.NODE_ENV = originalEnv;
   });
 
   describe('file types', () => {
@@ -84,14 +91,12 @@ describe('loadFromFiles', () => {
 
   describe('duplicate configurations', () => {
     it('should warn if duplicate configuration basenames are found', () => {
-      td.replace(console, 'warn');
+      spyOn(console, 'warn').mockImplementation(() => {});
       const fixtureDir = path.resolve(__dirname, 'fixtures', 'duplicates');
       loadFromFiles(fixtureDir);
-      td.verify(
-        console.warn(
-          td.matchers.contains('not recommended'),
-          td.matchers.contains({ dir: fixtureDir })
-        )
+      expect(console.warn).toHaveBeenCalledWith(
+        expect.stringContaining('not recommended'),
+        expect.objectContaining({ dir: fixtureDir })
       );
     });
   });
