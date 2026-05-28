@@ -3,7 +3,7 @@ import * as fs from "node:fs";
 import * as path from "node:path";
 import * as yaml from "js-yaml";
 import * as JSON5 from "json5";
-import { cloneDeep } from "lodash";
+import _ from "lodash";
 import type { ConfigValue } from "./index";
 
 /**
@@ -70,7 +70,7 @@ export default function loadFromFiles(dir: string, enableJs = false) {
 
         case ".js":
           if (enableJs) {
-            results[basename] = cloneDeep(require(fullPath) as ConfigValue);
+            results[basename] = _.cloneDeep(require(fullPath) as ConfigValue);
           }
           break;
       }

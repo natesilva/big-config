@@ -5,18 +5,19 @@ import * as path from "node:path";
 import * as util from "node:util";
 import { program } from "commander";
 import * as yaml from "js-yaml";
-import * as pkgDir from "pkg-dir";
+import { packageDirectorySync } from "pkg-dir";
+import pkg from "../package.json" with { type: "json" };
 import { Config, type ConfigValue, type Options } from ".";
 
-program.name("big-config").version("0.0.1");
+program.name("big-config").version(pkg.version);
 
 program.option(
   "-d, --dir <path>",
   "the base directory from which to recursively load configurations",
-  path.relative(".", path.join(pkgDir.sync() || ".", "config")),
+  path.relative(".", path.join(packageDirectorySync() || ".", "config")),
 );
 
-program.option("-js, --enable-js", "enable loading from JavaScript files", false);
+program.option("--js, --enable-js", "enable loading from JavaScript files", false);
 
 program.option(
   "-p, --prefix <prefix>",

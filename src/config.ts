@@ -1,5 +1,5 @@
 import * as path from "node:path";
-import { cloneDeep, get, isPlainObject, isUndefined, merge, omitBy } from "lodash";
+import _ from "lodash";
 import loadFromEnv from "./loadFromEnv";
 import loadFromFiles from "./loadFromFiles";
 
@@ -70,7 +70,7 @@ export class Config {
 
   /** Initialize the config system. Synchronously builds the entire config tree. */
   constructor(options?: Options) {
-    const resolvedOptions = { ...DEFAULT_OPTIONS, ...omitBy(options, isUndefined) };
+    const resolvedOptions = { ...DEFAULT_OPTIONS, ..._.omitBy(options, _.isUndefined) };
 
     if (
       resolvedOptions.env === "default" ||
@@ -82,7 +82,7 @@ export class Config {
     this.env = resolvedOptions.env;
     this.settings = {};
 
-    this.settings = merge(this.settings, resolvedOptions.json);
+    this.settings = _.merge(this.settings, resolvedOptions.json);
 
     const defaultDir = path.resolve(resolvedOptions.dir, "default");
     const envDir = path.resolve(resolvedOptions.dir, this.env);
@@ -95,20 +95,20 @@ export class Config {
       );
     }
 
-    this.settings = merge(
+    this.settings = _.merge(
       this.settings,
       loadFromFiles(defaultDir, resolvedOptions.enableJs),
     );
     const lff = loadFromFiles(envDir, resolvedOptions.enableJs);
-    this.settings = merge(this.settings, lff);
+    this.settings = _.merge(this.settings, lff);
     if (resolvedOptions.loadLocalConfig) {
-      this.settings = merge(
+      this.settings = _.merge(
         this.settings,
         loadFromFiles(localDir, resolvedOptions.enableJs),
       );
     }
 
-    this.settings = merge(this.settings, loadFromEnv(resolvedOptions.prefix));
+    this.settings = _.merge(this.settings, loadFromEnv(resolvedOptions.prefix));
   }
 
   /** Get the complete settings tree. */
@@ -117,9 +117,9 @@ export class Config {
   get<T extends ConfigValue>(key: string): T | undefined;
   get<T extends ConfigValue>(key?: string): T | ConfigValue | undefined {
     if (typeof key !== "string") {
-      return cloneDeep(this.settings);
+      return _.cloneDeep(this.settings);
     }
-    return cloneDeep(get(this.settings, key) as T);
+    return _.cloneDeep(_.get(this.settings, key) as T);
   }
 
   /** Get the top-level key names for the settings tree. */
@@ -128,10 +128,10 @@ export class Config {
   keys(atKey: string): string[] | undefined;
   keys(atKey?: string): string[] | undefined {
     const root = atKey
-      ? (get(this.settings, atKey) as ConfigValue | undefined)
+      ? (_.get(this.settings, atKey) as ConfigValue | undefined)
       : this.settings;
 
-    if (!isPlainObject(root)) {
+    if (!_.isPlainObject(root)) {
       return undefined;
     }
 
@@ -146,7 +146,7 @@ export class Config {
    * @throws if the requested value was not found
    */
   getOrFail<T extends ConfigValue>(key: string): T {
-    const value = get(this.settings, key, MISSING_VALUE) as unknown;
+    const value = _.get(this.settings, key, MISSING_VALUE) as unknown;
     if (value === MISSING_VALUE) {
       throw new Error(`[big-config] value not found for key ${key}`);
     }

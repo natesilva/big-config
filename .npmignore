@@ -1,9 +1,0 @@
-src
-.editorconfig
-.zed
-coverage
-test
-tsconfig.json
-mise.toml
-biome.json
-bun.lock

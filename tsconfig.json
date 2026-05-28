@@ -1,19 +1,7 @@
 {
+  "extends": "@tsconfig/bun/tsconfig.json",
   "include": ["src/**/*.ts", "test/**/*.ts"],
   "compilerOptions": {
-    "rootDir": ".",
-    "forceConsistentCasingInFileNames": true,
-    "noImplicitReturns": true,
-    "preserveConstEnums": true,
-    "strictNullChecks": true,
-    "sourceMap": true,
-    "declaration": true,
-    "target": "ESNext",
-    "outDir": "build",
-    "moduleResolution": "nodenext",
-    "lib": ["ESNext"],
-    "module": "nodenext",
-    "types": ["node", "bun"],
-    "skipLibCheck": true
+    "types": ["bun"]
   }
 }

@@ -1,4 +1,4 @@
-import { set } from "lodash";
+import _ from "lodash";
 
 /**
  * Load configuration settings from environment variables.
@@ -12,7 +12,7 @@ export default function loadFromEnv(prefix: string) {
     if (key.startsWith(prefix)) {
       if (process.env[key]) {
         const resolvedKey = key.slice(prefix.length).replace(/__/g, ".");
-        set(settings, resolvedKey, process.env[key]);
+        _.set(settings, resolvedKey, process.env[key]);
       }
     }
   }

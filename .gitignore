@@ -1,7 +1,32 @@
+# Node.js and TypeScript files to ignore
+node_modules
+dist
+
+# OS-generated files and others
+.DS_Store
+Thumbs.db
+tmp
+
+# dotenv environment variables
+.env
+
+# Output of `npm pack`
+*.tgz
+
+# Optional npm cache directory
+.npm
+
+# Optional REPL history
+.node_repl_history
+
+# Coverage directories
 coverage
 .nyc_output
-build
-node_modules/
-jspm_packages/
-*.tgz
-*.sublime-workspace
+
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# Others
+.claude
