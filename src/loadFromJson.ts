@@ -1,4 +1,4 @@
-import { ConfigObject, ConfigValue } from './config';
+import type { ConfigObject, ConfigValue } from "./config";
 
 /**
  * Load configuration settings from a JSON object.

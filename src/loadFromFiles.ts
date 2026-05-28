@@ -1,10 +1,10 @@
-import { strict as assert } from 'assert';
-import * as fs from 'fs';
-import * as yaml from 'js-yaml';
-import * as JSON5 from 'json5';
-import { cloneDeep } from 'lodash';
-import * as path from 'path';
-import { ConfigValue } from './index';
+import { strict as assert } from "node:assert";
+import * as fs from "node:fs";
+import * as path from "node:path";
+import * as yaml from "js-yaml";
+import * as JSON5 from "json5";
+import { cloneDeep } from "lodash";
+import type { ConfigValue } from "./index";
 
 /**
  * Load configuration settings from a directory containing configuration files.
@@ -45,32 +45,31 @@ export default function loadFromFiles(dir: string, enableJs = false) {
 
     try {
       switch (ext) {
-        case '.json5':
-        case '.jsonc':
+        case ".json5":
+        case ".jsonc":
           {
-            const input = fs.readFileSync(fullPath, 'utf8');
+            const input = fs.readFileSync(fullPath, "utf8");
             results[basename] = JSON5.parse(input);
           }
           break;
 
-        case '.json':
+        case ".json":
           {
-            const input = fs.readFileSync(fullPath, 'utf8');
+            const input = fs.readFileSync(fullPath, "utf8");
             results[basename] = JSON.parse(input) as ConfigValue;
           }
           break;
 
-        case '.yml':
-        case '.yaml':
+        case ".yml":
+        case ".yaml":
           {
-            const input = fs.readFileSync(fullPath, 'utf8');
+            const input = fs.readFileSync(fullPath, "utf8");
             results[basename] = yaml.load(input) as ConfigValue;
           }
           break;
 
-        case '.js':
+        case ".js":
           if (enableJs) {
-            // eslint-disable-next-line
             results[basename] = cloneDeep(require(fullPath) as ConfigValue);
           }
           break;
@@ -86,8 +85,8 @@ export default function loadFromFiles(dir: string, enableJs = false) {
   for (const [, duplicates] of Object.entries(seen)) {
     if (duplicates.length > 1) {
       const msg =
-        '[big-config] there are multiple configuration files in one directory with the ' +
-        'same basename; this is not recommended, as their settings may conflict';
+        "[big-config] there are multiple configuration files in one directory with the " +
+        "same basename; this is not recommended, as their settings may conflict";
       console.warn(msg, { dir, duplicates });
     }
   }

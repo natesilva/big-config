@@ -1,14 +1,14 @@
-import { cloneDeep, get, isPlainObject, isUndefined, merge, omitBy } from 'lodash';
-import * as path from 'path';
-import loadFromEnv from './loadFromEnv';
-import loadFromFiles from './loadFromFiles';
+import * as path from "node:path";
+import { cloneDeep, get, isPlainObject, isUndefined, merge, omitBy } from "lodash";
+import loadFromEnv from "./loadFromEnv";
+import loadFromFiles from "./loadFromFiles";
 
 /**
  * The possible types that can be stored in a configuration. We support anything YAML
  * does. YAML is mostly JSON, plus Buffer, which is returned for !!binary strings.
  *
  */
-export interface ConfigArray extends Array<ConfigValue> {} // eslint-disable-line
+export interface ConfigArray extends Array<ConfigValue> {}
 export type ConfigObject = { [Key in string]?: ConfigValue };
 export type ConfigValue =
   | string
@@ -19,7 +19,7 @@ export type ConfigValue =
   | ConfigObject
   | ConfigArray;
 
-const MISSING_VALUE = Symbol('MISSING_VALUE');
+const MISSING_VALUE = Symbol("MISSING_VALUE");
 
 export interface Options {
   /**
@@ -55,10 +55,10 @@ export interface Options {
 }
 
 const DEFAULT_OPTIONS: Required<Options> = {
-  env: process.env.NODE_ENV || 'development',
-  dir: path.resolve(process.cwd(), 'config'),
+  env: process.env.NODE_ENV || "development",
+  dir: path.resolve(process.cwd(), "config"),
   enableJs: false,
-  prefix: 'CONFIG__',
+  prefix: "CONFIG__",
   loadLocalConfig: true,
   json: {},
 };
@@ -73,8 +73,8 @@ export class Config {
     const resolvedOptions = { ...DEFAULT_OPTIONS, ...omitBy(options, isUndefined) };
 
     if (
-      resolvedOptions.env === 'default' ||
-      (resolvedOptions.env === 'local' && resolvedOptions.loadLocalConfig)
+      resolvedOptions.env === "default" ||
+      (resolvedOptions.env === "local" && resolvedOptions.loadLocalConfig)
     ) {
       throw new Error(`[big-config] ${resolvedOptions.env} is not a valid env name`);
     }
@@ -84,27 +84,27 @@ export class Config {
 
     this.settings = merge(this.settings, resolvedOptions.json);
 
-    const defaultDir = path.resolve(resolvedOptions.dir, 'default');
+    const defaultDir = path.resolve(resolvedOptions.dir, "default");
     const envDir = path.resolve(resolvedOptions.dir, this.env);
-    const localDir = path.resolve(resolvedOptions.dir, 'local');
+    const localDir = path.resolve(resolvedOptions.dir, "local");
 
     if (resolvedOptions.enableJs) {
       console.warn(
-        '[big-config] enabling potentially unsafe parsing of .js files because the ' +
-          'enableJs option is true'
+        "[big-config] enabling potentially unsafe parsing of .js files because the " +
+          "enableJs option is true",
       );
     }
 
     this.settings = merge(
       this.settings,
-      loadFromFiles(defaultDir, resolvedOptions.enableJs)
+      loadFromFiles(defaultDir, resolvedOptions.enableJs),
     );
     const lff = loadFromFiles(envDir, resolvedOptions.enableJs);
     this.settings = merge(this.settings, lff);
     if (resolvedOptions.loadLocalConfig) {
       this.settings = merge(
         this.settings,
-        loadFromFiles(localDir, resolvedOptions.enableJs)
+        loadFromFiles(localDir, resolvedOptions.enableJs),
       );
     }
 
@@ -116,7 +116,7 @@ export class Config {
   /** Get a specific setting. A dot-separated path may be used to access nested values. */
   get<T extends ConfigValue>(key: string): T | undefined;
   get<T extends ConfigValue>(key?: string): T | ConfigValue | undefined {
-    if (typeof key !== 'string') {
+    if (typeof key !== "string") {
       return cloneDeep(this.settings);
     }
     return cloneDeep(get(this.settings, key) as T);
@@ -162,7 +162,7 @@ export class Config {
    */
   getString(key: string): string {
     const value = this.getOrFail(key) as unknown;
-    if (typeof value !== 'string') {
+    if (typeof value !== "string") {
       throw new Error(`[big-config] value for key ${key} is not a string`);
     }
     return value;
@@ -177,7 +177,7 @@ export class Config {
    */
   getNumber(key: string): number {
     const value = this.getOrFail(key) as unknown;
-    if (typeof value !== 'number') {
+    if (typeof value !== "number") {
       throw new Error(`[big-config] value for key ${key} is not a number`);
     }
     return value;
@@ -192,7 +192,7 @@ export class Config {
    */
   getBoolean(key: string): boolean {
     const value = this.getOrFail(key) as unknown;
-    if (typeof value !== 'boolean') {
+    if (typeof value !== "boolean") {
       throw new Error(`[big-config] value for key ${key} is not a boolean`);
     }
     return value;

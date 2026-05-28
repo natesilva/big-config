@@ -1,9 +1,9 @@
 src
 .editorconfig
-.eslint*
-.prettierrc.json
-.vscode
+.zed
 coverage
 test
 tsconfig.json
-*.sublime-*
+mise.toml
+biome.json
+bun.lock
